@@ -44,7 +44,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
 
     return (
         <Stack direction="horizontal" gap={3}>
-            <motion.Form onSubmit={onSubmit} className="w-100"
+            <motion.form onSubmit={onSubmit} className="w-100"
                          initial={{ x: -100, y: -100, opacity: 0 }}
                          animate={{ x: 0, y: 0, opacity: 1 }}
                          transition={{ type: "spring", delay: 0.5, duration: 1 }}
@@ -52,7 +52,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                 <Row>
                     <Col>
                         {title && <h2>{title}</h2>}
-                        <Form.Group className="py-2" controlId="exampleForm.ControlInput1">
+                        <Form.Group className="py-2">
                             <Form.Label>Email address</Form.Label>
                             <Controller
                                 control={control}
@@ -65,7 +65,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                         {errors.email && <span className="text-danger">{errors.email.message}</span>}
                     </Col>
                     <Col>
-                        <Form.Group className="py-2" controlId="exampleForm.ControlInput1">
+                        <Form.Group className="py-2">
                             <Form.Label>Role</Form.Label>
                             <Controller
                                 control={control}
@@ -78,7 +78,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                         {errors.role && <span className="text-danger">{errors.role.message}</span>}
                     </Col>
                     <Col>
-                        <Form.Group className="py-2" controlId="exampleForm.ControlInput3">
+                        <Form.Group className="py-2">
                             <Form.Label>Active State</Form.Label>
                             <Controller
                                 control={control}
@@ -90,7 +90,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                         </Form.Group>
                         {errors.activeState && <span className="text-danger">{errors.activeState.message}</span>}
                     </Col>
-                    <Col className="d-flex align-items-center" controlId="exampleForm.ControlInput1">
+                    <Col className="d-flex align-items-center">
                         <Button variant="dark" type="submit" className="w-100">
                             {buttonText || "Submit"}
                         </Button>
@@ -98,7 +98,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                 </Row>
                 <Row>
                     <Col>
-                        <Form.Group className="py-2" controlId="exampleForm.ControlInput1">
+                        <Form.Group className="py-2">
                             <Form.Label>Password</Form.Label>
                             <Controller
                                 control={control}
@@ -111,7 +111,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                         {errors.password && <span className="text-danger">{errors.password.message}</span>}
                     </Col>
                     <Col>
-                        <Form.Group className="py-2" controlId="exampleForm.ControlInput1">
+                        <Form.Group className="py-2">
                             <Form.Label>Full Name</Form.Label>
                             <Controller
                                 control={control}
@@ -124,7 +124,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                         {errors.fullName && <span className="text-danger">{errors.fullName.message}</span>}
                     </Col>
                 </Row>
-            </motion.Form>
+            </motion.form>
         </Stack>
     );
 };

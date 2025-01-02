@@ -5,9 +5,9 @@ import {Button, Table} from "react-bootstrap";
 import UserForm from "../Forms/UserForm.tsx";
 
 interface User{
-    fullName:string,
-    email:string,
-    activeState: boolean|undefined,
+    fullName:string;
+    email:string;
+    activeState: boolean|undefined;
 }
 type  Users = User & {_id:string};
 type  user = User & {password:string,role:string};
@@ -44,7 +44,7 @@ const UserManagement = () => {
     return (
         <>
             <PageBadge
-                title='Customer Management'
+                title='User Management'
             />
             <UserForm
                 onSave={(userData)=>{createUser(userData);}}
@@ -66,8 +66,12 @@ const UserManagement = () => {
                             <td className="text-center">{u._id}</td>
                             <td className="text-center">{u.fullName}</td>
                             <td className="text-center">{u.email}</td>
-                            <td className="text-center">{u.activeState}</td>
-                            <td className="text-center"><Button variant="secondary">Update</Button></td>
+                            <td className="text-center">{u.activeState ? 'Active' : 'Inactive'}</td>
+                            <td className="text-center">
+                                <Button variant="secondary">
+                                    Update
+                                </Button>
+                            </td>
                             <td className="text-center">
                                 <Button variant="danger"
                                         onClick={()=>{
