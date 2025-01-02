@@ -3,6 +3,7 @@ import axios from "axios";
 import PageBadge from "../component/PageBadge/PageBadge.tsx";
 import {Button, Table} from "react-bootstrap";
 import CustomerForm from "../Forms/CustomerForm.tsx";
+import { motion } from 'framer-motion';
 
 interface Customer{
     firstName:string;
@@ -53,7 +54,11 @@ const CustomerManagement = () => {
                 onSave={(CustomerData)=>{createCustomer(CustomerData);}}
             />
             <Table striped bordered hover size="sm">
-                <thead>
+                <motion.thead
+                    initial={{ x: -100, y: -100, opacity: 0 }}
+                    animate={{ x: 0, y: 0, opacity: 1 }}
+                    transition={{ type: "spring", delay: 0.2, duration: 1 }}
+                >
                     <tr>
                         <th className="text-center">#</th>
                         <th className="text-center">First Name</th>
@@ -65,8 +70,12 @@ const CustomerManagement = () => {
                         <th className="text-center">update</th>
                         <th className="text-center">Delete</th>
                     </tr>
-                </thead>
-                <tbody>
+                </motion.thead>
+                <motion.tbody
+                    initial={{ x: -100, y: -100, opacity: 0 }}
+                    animate={{ x: 0, y: 0, opacity: 1 }}
+                    transition={{ type: "spring", delay: 0.2, duration: 1 }}
+                >
                 {customers?.length > 0 ? (
                     customers.map((u, index) => (
                         <tr key={index}>
@@ -99,7 +108,7 @@ const CustomerManagement = () => {
                     </tr>
                     )
                     }
-                </tbody>
+                </motion.tbody>
             </Table>
         </>
     );

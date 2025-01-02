@@ -3,6 +3,7 @@ import axios from "axios";
 import PageBadge from "../component/PageBadge/PageBadge.tsx";
 import {Button, Table} from "react-bootstrap";
 import UserForm from "../Forms/UserForm.tsx";
+import {motion} from "framer-motion";
 
 interface User{
     fullName:string;
@@ -42,7 +43,11 @@ const UserManagement = () => {
     }, [])
 
     return (
-        <>
+        <motion.div
+        initial={{ x: -100, y: -100, opacity: 0 }}
+        animate={{ x: 0.2, y: 0.2, opacity: 1 }}
+        transition={{ type: "spring", delay: 0.5, duration: 1 }}
+        >
             <PageBadge
                 title='User Management'
             />
@@ -87,7 +92,7 @@ const UserManagement = () => {
                     )}
                 </tbody>
             </Table>
-        </>
+        </motion.div>
     );
 }
 export default UserManagement;

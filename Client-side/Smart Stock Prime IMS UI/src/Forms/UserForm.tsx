@@ -44,11 +44,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
 
     return (
         <Stack direction="horizontal" gap={3}>
-            <motion.form onSubmit={onSubmit} className="w-100"
-                         initial={{ x: -100, y: -100, opacity: 0 }}
-                         animate={{ x: 0, y: 0, opacity: 1 }}
-                         transition={{ type: "spring", delay: 0.5, duration: 1 }}
-            >
+            <Form onSubmit={onSubmit} className="w-100">
                 <Row>
                     <Col>
                         {title && <h2>{title}</h2>}
@@ -124,7 +120,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                         {errors.fullName && <span className="text-danger">{errors.fullName.message}</span>}
                     </Col>
                 </Row>
-            </motion.form>
+            </Form>
         </Stack>
     );
 };

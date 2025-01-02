@@ -49,7 +49,7 @@ const CustomerForm = ({ onSave, title, buttonText }: Props) => {
         <motion.form onSubmit={onSubmit} className="w-100"
                      initial={{ x: -100, y: -100, opacity: 0 }}
                      animate={{ x: 0, y: 0, opacity: 1 }}
-                     transition={{ type: "spring", delay: 0.5, duration: 1 }}
+                     transition={{ type: "spring", delay: 0.2, duration: 1 }}
         >
             <Row>
                 <Col>
@@ -139,7 +139,7 @@ const CustomerForm = ({ onSave, title, buttonText }: Props) => {
                     {errors.activeState && <span className="text-danger">{errors.activeState.message}</span>}
                 </Col>
             </Row>
-        </motion.Form>
+        </motion.form>
     </Stack>
     );
 };
