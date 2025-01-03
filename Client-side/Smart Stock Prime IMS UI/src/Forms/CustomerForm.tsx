@@ -12,18 +12,15 @@ const formSchema = z.object({
     phoneNumber: z.string().min(1, "phoneNumber is required"),
     activeState: z.boolean(),
 });
-
 export type CustomerFormData = z.infer<typeof formSchema>;
-
 type Props = {
     onSave: (userProfileData: CustomerFormData) => void;
     title?: string;
     buttonText?: string;
 };
-
 const CustomerForm = ({ onSave, title, buttonText }: Props) => {
     const {
-        control, // Use control instead of register for improved type safety
+        control, 
         handleSubmit,
         formState: { errors },
         reset,

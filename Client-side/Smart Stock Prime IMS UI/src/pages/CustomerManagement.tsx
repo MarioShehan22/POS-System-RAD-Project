@@ -14,11 +14,8 @@ interface Customer{
     activeState: boolean | undefined;
 }
 type  Customers = Customer & {_id:string};
-// type  user = User & {password:string,role:string};
-
 const CustomerManagement = () => {
     const [customers, setCustomers]=useState<Customers[]>([]);
-    // const [currentData,setCurrentData] = useState<User>({ activeState: undefined, email: "", fullName: ""})
     const findAllCustomers = async ()=> {
         try {
             const response = await axios.get('http://localhost:3000/api/v1/customers/find-all');
