@@ -4,10 +4,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App.tsx'
 import {Container} from "react-bootstrap";
 import "./index.css"
+import { BrowserRouter as Router} from "react-router-dom";
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
       <Container>
+        <Router>
           <App/>
+        </Router>
       </Container>
   </StrictMode>,
 )
