@@ -1,0 +1,15 @@
+.dashboard-container {
+    height: 100vh; /* Equivalent to h-screen */
+    width: 100vw;  /* Equivalent to w-screen */
+    display: flex; /* Equivalent to flex */
+}
+
+.inner-container {
+    width: 100vw;  /* Equivalent to w-screen */
+    padding: 0.25rem; /* Equivalent to p-1 */
+}
+
+.content-container {
+    flex-grow: 1; /* Equivalent to flex-grow */
+    margin: 1.25rem; /* Equivalent to m-5 */
+}

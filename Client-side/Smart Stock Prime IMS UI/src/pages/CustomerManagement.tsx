@@ -40,7 +40,7 @@ const CustomerManagement = () => {
     }
     useEffect(()=>{
         findAllCustomers();
-    }, [])
+    }, []);
 
     return (
         <>
