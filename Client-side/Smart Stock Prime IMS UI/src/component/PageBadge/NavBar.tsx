@@ -1,19 +1,25 @@
 import { Col, Container, Nav, Navbar, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import "./NavBar.css"
 
 const NavBar = () => {
     return (
         <>
-            <Navbar bg="dark" data-bs-theme="dark">
-                <Container>
+            <Navbar bg="dark" data-bs-theme="dark" sticky="top" className="border border-white">
+                <Container className="w-100 d-flex justify-content-between align-items-center">
                     <Navbar.Brand href="#home">Smart Stock Prime</Navbar.Brand>
-                    <Nav className="me-auto">
+
+                    <Nav className="nav-center-width d-flex justify-content-between align-items-center">
                         {/* <Link to="/">Home</Link> */}
-                        <Nav.Link href="#home"><Link to="/user-page">User</Link></Nav.Link>
-                        <Nav.Link href="#home"><Link to="/customer-page">Customer</Link></Nav.Link>
-                        <Nav.Link href="#home"><Link to="/product-page">Product</Link></Nav.Link>
-                        
-                        {/* <Nav.Link href="#home"><Link to="/customer-page">Customer</Link></Nav.Link> */}
+                        <Link to="/" className="text-decoration-none text-body my-element">Home</Link>
+                        <Link to="/user-page" className="text-decoration-none text-body my-element">User</Link>
+                        <Link to="/customer-page" className="text-decoration-none text-body my-element">Customer</Link>
+                        <Link to="/product-page" className="text-decoration-none text-body my-element">Product</Link>
+                        <Link to="/Order-page" className="text-decoration-none text-body my-element">Place Order</Link>
+                        <Link to="/Order-Details-page" className="text-decoration-none text-body my-element">Order Detils</Link>
+                    </Nav>
+                    <Nav className="d-flex justify-content-between align-items-center">
+                        <Nav.Link href="#login" className="justify-content-end flex-grow">LogIn</Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>

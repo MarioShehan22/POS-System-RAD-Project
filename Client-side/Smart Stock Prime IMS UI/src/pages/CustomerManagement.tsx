@@ -4,8 +4,9 @@ import PageBadge from "../component/PageBadge/PageBadge.tsx";
 import {Button, Table} from "react-bootstrap";
 import CustomerForm from "../Forms/CustomerForm.tsx";
 import { motion } from 'framer-motion';
+import CustomerUpdateModalForm from "../Forms/CustomerUpdateModalForm.tsx";
 
-interface Customer{
+export interface Customer{
     firstName:string;
     lastName:string;
     email:string;
@@ -13,9 +14,19 @@ interface Customer{
     phoneNumber:string;
     activeState: boolean | undefined;
 }
-type  Customers = Customer & {_id:string};
+export type  Customers = Customer & {_id:string};
 const CustomerManagement = () => {
     const [customers, setCustomers]=useState<Customers[]>([]);
+    const [updateCustomers, setUpdateCustomers]=useState<Customers>({
+        _id:"",
+        firstName:"",
+        lastName:"",
+        email:"",
+        address:"",
+        phoneNumber:"",
+        activeState: false
+    });
+    const [modalShow, setModalShow] = useState<boolean>(false);
     const findAllCustomers = async ()=> {
         try {
             const response = await axios.get('http://localhost:3000/api/v1/customers/find-all');
@@ -43,7 +54,11 @@ const CustomerManagement = () => {
     }, []);
 
     return (
-        <>
+        <motion.div
+            initial={{ x: -100, y: -100, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ type: "spring", delay: 0.2, duration: 1 }}
+        >
             <PageBadge
                 title='Customer Management'
             />
@@ -51,11 +66,7 @@ const CustomerManagement = () => {
                 onSave={(CustomerData)=>{createCustomer(CustomerData);}}
             />
             <Table striped bordered hover size="sm">
-                <motion.thead
-                    initial={{ x: -100, y: -100, opacity: 0 }}
-                    animate={{ x: 0, y: 0, opacity: 1 }}
-                    transition={{ type: "spring", delay: 0.2, duration: 1 }}
-                >
+                <thead>
                     <tr>
                         <th className="text-center">#</th>
                         <th className="text-center">First Name</th>
@@ -67,12 +78,8 @@ const CustomerManagement = () => {
                         <th className="text-center">update</th>
                         <th className="text-center">Delete</th>
                     </tr>
-                </motion.thead>
-                <motion.tbody
-                    initial={{ x: -100, y: -100, opacity: 0 }}
-                    animate={{ x: 0, y: 0, opacity: 1 }}
-                    transition={{ type: "spring", delay: 0.2, duration: 1 }}
-                >
+                </thead>
+                <tbody>
                 {customers?.length > 0 ? (
                     customers.map((u, index) => (
                         <tr key={index}>
@@ -83,7 +90,16 @@ const CustomerManagement = () => {
                              <td className="text-center">{u.address}</td>
                              <td className="text-center">{u.phoneNumber}</td>
                              <td className="text-center">{u.activeState ? 'Active' : 'Inactive'}</td>
-                             <td className="text-center"><Button variant="secondary">Update</Button></td>
+                             <td className="text-center">
+                                <Button variant="secondary"
+                                    onClick={
+                                        () => {
+                                            setUpdateCustomers(u);
+                                            setModalShow(true);
+                                        }}
+                                >
+                                    Update
+                                </Button></td>
                              <td className="text-center">
                                 <Button variant="danger"
                                         onClick={()=>{
@@ -105,9 +121,14 @@ const CustomerManagement = () => {
                     </tr>
                     )
                     }
-                </motion.tbody>
+                </tbody>
             </Table>
-        </>
+            {modalShow && <CustomerUpdateModalForm
+              data={updateCustomers}
+              show={modalShow}
+              onHide={() => setModalShow(false)}
+          />}
+        </motion.div>
     );
 }
 export default CustomerManagement;

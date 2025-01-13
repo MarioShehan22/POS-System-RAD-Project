@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {Button, Col, Form, Row, Stack} from "react-bootstrap";
+import {Button, Col, FloatingLabel, Form, Row, Stack} from "react-bootstrap";
 import { motion } from 'framer-motion';
 
 const formSchema = z.object({
@@ -54,7 +54,11 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
                 <Col>
                     {title && <h2>{title}</h2>}
                     <Form.Group className="py-2">
-                        <Form.Label>Product Name</Form.Label>
+                    <FloatingLabel
+                        controlId="floatingTextarea"
+                        label="Product Name"
+                        className="mb-3"
+                    >
                         <Controller
                             control={control}
                             name="productName"
@@ -62,12 +66,17 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
                                 <Form.Control  {...field} type="text" placeholder="Product Name"/>
                             )}
                         />
+                    </FloatingLabel> 
                     </Form.Group>
                     {errors.productName && <span className="text-danger">{errors.productName.message}</span>}
                 </Col>
                 <Col>
                     <Form.Group className="py-2">
-                        <Form.Label>First Name</Form.Label>
+                    <FloatingLabel
+                        controlId="floatingTextarea"
+                        label="Quntity"
+                        className="mb-3"
+                    >
                         <Controller
                             control={control}
                             name="quantity"
@@ -75,12 +84,17 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
                                 <Form.Control  {...field} type="number" placeholder="Enter quantity"/>
                             )}
                         />
+                        </FloatingLabel>
                     </Form.Group>
                     {errors.quantity && <span className="text-danger">{errors.quantity.message}</span>}
                 </Col>
                 <Col>
                     <Form.Group className="py-2">
-                        <Form.Label>Description</Form.Label>
+                        <FloatingLabel
+                            controlId="floatingTextarea"
+                            label="Description"
+                            className="mb-3"
+                        >
                         <Controller
                             control={control}
                             name="description"
@@ -88,6 +102,8 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
                                 <Form.Control  {...field} type="text" placeholder="Enter description"/>
                             )}
                         />
+                    </FloatingLabel>
+                       
                     </Form.Group>
                     {errors.description && <span className="text-danger">{errors.description.message}</span>}
                 </Col>
@@ -100,51 +116,67 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
             <Row>
                 <Col>
                     <Form.Group className="py-2">
-                        <Form.Label>Selling Price</Form.Label>
-                        <Controller
-                            control={control}
-                            name="sellingPrice"
-                            render={({field}) => (
-                                <Form.Control  {...field} type="number" placeholder="Enter sellingPrice"/>
-                            )}
-                        />
+                        <FloatingLabel
+                            controlId="floatingTextarea"
+                            label="Selling Price"
+                            className="mb-3"
+                        >
+                            <Controller
+                                control={control}
+                                name="sellingPrice"
+                                render={({field}) => (
+                                    <Form.Control  {...field} type="number" placeholder="Enter sellingPrice"/>
+                                )}
+                            />
+                        </FloatingLabel>
                     </Form.Group>
                     {errors.sellingPrice && <span className="text-danger">{errors.sellingPrice.message}</span>}
                 </Col>
                 <Col>
                     <Form.Group className="py-2">
-                        <Form.Label>Show Price</Form.Label>
-                        <Controller
+                        <FloatingLabel
+                            controlId="floatingTextarea"
+                            label="Show Price"
+                            className="mb-3"
+                        >
+                            <Controller
                             control={control}
                             name="showPrice"
                             render={({field}) => (
                                 <Form.Control  {...field} type="number" placeholder="Enter showPrice"/>
                             )}
                         />
+                        </FloatingLabel>
+                        
                     </Form.Group>
                     {errors.showPrice && <span className="text-danger">{errors.showPrice.message}</span>}
                 </Col>
                 <Col>
                     <Form.Group className="py-2">
-                        <Form.Label>Exp Date</Form.Label>
-                        <Controller
+                        <FloatingLabel
+                            controlId="floatingTextarea"
+                            label="Exp Date"
+                            className="mb-3"
+                        >
+                             <Controller
                             control={control}
                             name="expDate"
                             render={({field}) => (
                                 <Form.Control  {...field} type="date" placeholder="Enter date"/>
                             )}
                         />
+                        </FloatingLabel>                      
                     </Form.Group>
                     {errors.expDate && <span className="text-danger">{errors.expDate.message}</span>}
                 </Col>
                 <Col>
-                    <Form.Group className="py-2">
-                        <Form.Label>Active State</Form.Label>
+                    <Form.Group className="py-2 d-flex border">
+                        <Form.Label className="border">Active State</Form.Label>
                         <Controller
                             control={control}
                             name="activeState"
                             render={({ field }) => (
-                                <Form.Check {...field} type="checkbox" value={undefined} label="Active" defaultChecked />
+                                <Form.Check className="ms-2 border" {...field} type="checkbox" value={undefined} label="Active" defaultChecked />
                             )}
                         />
                     </Form.Group>

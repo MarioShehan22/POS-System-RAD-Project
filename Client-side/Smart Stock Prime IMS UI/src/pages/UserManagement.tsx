@@ -4,18 +4,34 @@ import PageBadge from "../component/PageBadge/PageBadge.tsx";
 import {Button, Table} from "react-bootstrap";
 import UserForm from "../Forms/UserForm.tsx";
 import {motion} from "framer-motion";
+import { UserUpdateModalForm } from "../Forms/UserUpdateModalForm.tsx";
 
-interface User{
+export interface User{
     fullName:string;
     email:string;
     activeState: boolean|undefined;
 }
 type  Users = User & {_id:string};
 type  user = User & {password:string,role:string};
-
+export type UpdateUser = {
+    _id:string;
+    fullName:string;
+    email:string;
+    activeState: boolean;
+    password:string;
+    role:string;
+}
 const UserManagement = () => {
-    const [user, setUser]=useState<Users[]>([]);
-    // const [currentData,setCurrentData] = useState<User>({ activeState: undefined, email: "", fullName: ""})
+    const [user, setUser]=useState<UpdateUser[]>([]);
+    const [updateUser,setUpdateUser] = useState<UpdateUser>({ 
+        _id:"",
+        password: "",
+        role: "",
+        activeState: false, 
+        email: "",
+        fullName: ""
+    });
+    const [modalShow, setModalShow] = useState<boolean>(false);
     const findAllUsers = async ()=> {
         try {
             const response = await axios.get('http://localhost:3000/api/v1/users/find-all');
@@ -73,7 +89,13 @@ const UserManagement = () => {
                             <td className="text-center">{u.email}</td>
                             <td className="text-center">{u.activeState ? 'Active' : 'Inactive'}</td>
                             <td className="text-center">
-                                <Button variant="secondary">
+                                <Button variant="secondary"
+                                    onClick={
+                                        () => {
+                                            setUpdateUser(u);
+                                            setModalShow(true);
+                                        }}
+                                >
                                     Update
                                 </Button>
                             </td>
@@ -92,6 +114,11 @@ const UserManagement = () => {
                     )}
                 </tbody>
             </Table>
+            {modalShow && <UserUpdateModalForm
+              data={updateUser}
+              show={modalShow}
+              onHide={() => setModalShow(false)}
+          />}
         </motion.div>
     );
 }
