@@ -10,6 +10,7 @@ const formSchema = z.object({
     description: z.string().min(1, "description is required"),
     sellingPrice: z.number().min(1, "selling Price is required"),
     showPrice: z.number().min(1, "show Price is required"),
+    buyPrice: z.number().min(1, "buy Price Price is required"),
     expDate: z.string().date(),
     activeState: z.boolean(),
 });
@@ -169,6 +170,26 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
                     </Form.Group>
                     {errors.expDate && <span className="text-danger">{errors.expDate.message}</span>}
                 </Col>
+                <Col>
+                    <Form.Group className="py-2">
+                        <FloatingLabel
+                            controlId="floatingTextarea"
+                            label="Buy Price"
+                            className="mb-3"
+                        >
+                             <Controller
+                            control={control}
+                            name="buyPrice"
+                            render={({field}) => (
+                                <Form.Control  {...field} type="number" placeholder="Enter Buy Price"/>
+                            )}
+                        />
+                        </FloatingLabel>                      
+                    </Form.Group>
+                    {errors.buyPrice && <span className="text-danger">{errors.buyPrice.message}</span>}
+                </Col>
+            </Row>
+            <Row>
                 <Col>
                     <Form.Group className="py-2 d-flex border">
                         <Form.Label className="border">Active State</Form.Label>

@@ -1,0 +1,15 @@
+.main-container {
+    display: grid;
+    justify-items: center;
+    grid-template-columns: repeat(auto-fill,minmax(25rem,1fr));
+}
+.card-style{
+    width: 25rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.card-style:hover{
+    background-color: azure;
+    cursor: pointer;
+}
