@@ -52,9 +52,21 @@ const deleteCustomer = async (req,resp)=>{// admin,manager
         resp.status(500).json({error:e.message});
     }
 }
+const findById = async (req,resp)=>{
+    try{
+        const selectedCustomer = await CustomerSchema.findById(req.params.id);
+        if(selectedCustomer){
+            return resp.status(200).json({message:"customer found!",data:selectedCustomer});
+        }
+        resp.status(404).json({message:"customer not found!"});
+    }catch(e){
+        resp.status(500).json({error:e.message});
+    }
+}
 module.exports= {
     saveCustomer,
     loadAllCustomers,
     updateCustomer,
     deleteCustomer,
+    findById
 }

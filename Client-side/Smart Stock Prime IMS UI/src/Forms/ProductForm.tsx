@@ -191,13 +191,13 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
             </Row>
             <Row>
                 <Col>
-                    <Form.Group className="py-2 d-flex border">
-                        <Form.Label className="border">Active State</Form.Label>
+                    <Form.Group className="py-2 d-flex">
+                        <Form.Label>Active State</Form.Label>
                         <Controller
                             control={control}
                             name="activeState"
                             render={({ field }) => (
-                                <Form.Check className="ms-2 border" {...field} type="checkbox" value={undefined} label="Active" defaultChecked />
+                                <Form.Check className="ms-2" {...field} type="checkbox" value={undefined} label="Active" defaultChecked />
                             )}
                         />
                     </Form.Group>

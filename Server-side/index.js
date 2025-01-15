@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const UserRoute = require('./routes/UserRoutes');
 const CustomerRoute = require('./routes/CustomerRoutes');
 const ProductRoutes = require('./routes/ProductRoutes');
+const OrderRoute = require('./routes/OrderRoutes');
 
 require('dotenv').config();
 const app = express();
@@ -27,3 +28,4 @@ app.listen(process.env.PORT, () => {
 app.use('/api/v1/users',UserRoute);
 app.use('/api/v1/customers',CustomerRoute);
 app.use('/api/v1/products',ProductRoutes);
+app.use('/api/v1/orders',OrderRoute);

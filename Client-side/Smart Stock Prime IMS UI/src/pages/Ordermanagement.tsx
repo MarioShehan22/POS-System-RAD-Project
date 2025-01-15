@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import { Products } from './ProductManagement';
-import { Button, Card, Container, Row, Table } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row, Table } from 'react-bootstrap';
 import "../pages/Style/productStyle.css";
+import { Customers } from './CustomerManagement';
 
 interface Cart{
   _id:string | '',
@@ -17,6 +18,10 @@ const Ordermanagement = () => {
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [size] = useState(6); 
+  const [selectedCustomer,setSelectedCustomer] = useState<Customers>(Object);
+  const [customers, setCustomers]=useState<Customers[]>([]);
+  //const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
+
   const findAllProducts = async ()=> {
     try {
       const response = await axios.get(`http://localhost:3000/api/v1/products/find-all?searchText=${searchText}&page=${page}&size=${size}`);
@@ -25,6 +30,18 @@ const Ordermanagement = () => {
     }catch (error){
       console.log(error);
     }
+  }
+  const findAllCustomers= async ()=>{
+    const response = await axios.get('http://localhost:3000/api/v1/customers/find-all');
+    setCustomers(response.data.data.dataList);
+    console.log(response.data.data.dataList); 
+  }
+  const getCustomerById= async (id:string)=>{
+    //setIsLoadingCustomer(true);
+    const response = await axios.get('http://localhost:3000/api/v1/customers/find-by-id/' + id);
+    setSelectedCustomer(response.data.data);
+    //setIsLoadingCustomer(false);
+    console.log(response.data.data);
   }
   const addToCart = (newItem: Cart) => {
     // Check if the item already exists in the cart
@@ -67,11 +84,26 @@ const Ordermanagement = () => {
   useEffect(()=>{
     findAllProducts();
   }, [searchText,page]);
+  useEffect(()=>{
+    findAllCustomers();
+  },[]);
   return (
-    <Container className='border'>
-      <Row xs={1} md={2} className="mt-4 main-container ">
+    <Container>
+      <Row className='my-2 p-2'>
+          <select id="customer" className='form-control w-25'onChange={(e)=>{getCustomerById(e.target.value)}}>
+            <option value="">Select Customer</option>
+            {customers.length > 0 && (
+              <>
+                {customers.map((customer, index) => (
+                  <option key={index} value={customer._id}>{customer.firstName}</option>
+                ))}
+              </>
+            )}
+          </select>
+        </Row>
+      <Row xs={1} md={2} className="mb-4 main-container">
         {products.map((product, index) => (
-          <Card key={product._id || index} className='card-style border'>
+          <Card key={product._id || index} className='card-style'>
             <Card.Body>
               <Card.Title className='text-capitalize'>{product.productName}</Card.Title>
               <Card.Title>Rs {product.showPrice}</Card.Title>
@@ -101,8 +133,11 @@ const Ordermanagement = () => {
           </Card>
         ))}
       </Row>
-      <Button onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
-      <Button onClick={() => setPage(page + 1)}>Next</Button>
+      <Row className='d-flex justify-content-center'>
+        <Button className='w-25 me-2' onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
+        <Button className='w-25 ' onClick={() => setPage(page + 1)}>Next</Button>
+      </Row>
+      
       <h2>Cart Items</h2>
       {selectedProducts.length > 0 ? (
         <Table striped bordered hover size="sm">
@@ -145,14 +180,19 @@ const Ordermanagement = () => {
         <p>No items in the cart.</p>
       )}
       <h2 className='text-danger'>Total : {getTotal()} </h2>
-      <button className='btn btn-secondary' onClick={async ()=>{
-          await axios.post('/orders/create/',{
-            date:new Date(),
-            // customerDetails:selectedCustomer,
-            totalCost:getTotal(),
-            products: selectedProducts
-            });
-      }}>Place Order</button>
+        <button className='my-2 btn btn-secondary' 
+        onClick={async ()=>{
+            await axios.post('http://localhost:3000/api/v1/orders/create',{
+              Customer:selectedCustomer,
+              status:"PENDING",
+              total:getTotal(),
+              products: selectedProducts
+              });
+              setSelectedProducts([]);
+              //selectedCustomer(Object);
+        }}>
+          Place Order
+        </button>
     </Container>
   )
 }
