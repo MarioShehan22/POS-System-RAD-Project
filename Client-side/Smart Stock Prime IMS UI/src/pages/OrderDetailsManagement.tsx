@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import { Button, Table } from 'react-bootstrap';
+import { motion } from 'framer-motion';
+import { BiPencil } from 'react-icons/bi';
+import { RiDeleteBin6Line } from 'react-icons/ri';
 interface Orders {
   _id:String;
   products:[
@@ -33,7 +36,11 @@ const OrderDetailsManagement = () => {
     findAllOrders();
   },[[searchText, page]]);
   return (
-    <div>
+    <motion.div
+      initial={{ x: -100, y: -100, opacity: 0 }}
+      animate={{ x: 0, y: 0, opacity: 1 }}
+      transition={{ type: "spring", delay: 0.2, duration: 1 }}
+    >
        <Table striped bordered hover size="sm" className='my-2'>
             <thead>
                 <tr className="fs-6 fw-medium">
@@ -41,9 +48,9 @@ const OrderDetailsManagement = () => {
                     <th className="text-center">Product</th>
                     <th className="text-center">Customer</th>
                     <th className="text-center">Total</th>
-                    <th className="text-center">status</th>
+                    <th className="text-center">Status</th>
                     <th className="text-center">Date</th>
-                    <th className="text-center">update</th>
+                    <th className="text-center">Update</th>
                     <th className="text-center">Delete</th>
                 </tr>
             </thead>
@@ -54,14 +61,16 @@ const OrderDetailsManagement = () => {
                     <td className="text-center">{order._id}</td>
                     <td className="text-start">
                       {order.products.map((p) => (
-                        <li key={p._id}> {p.name} </li>
+                        <li key={p._id}> {p.name}   {p.qty}</li>
                       ))}
                     </td>
                     <td className="text-center">{order.Customer._id ||order.Customer }</td>  {/* Assuming 'name' is the property for customer name */}
                     <td className="text-center">{order.total}</td>
-                    <td className="text-center">{order.status}</td>
-                    <td className="text-center">{order.Date}</td>
-                    <td className="text-center"><Button variant="secondary">Update</Button></td>
+                    <td className="text-center">
+                      {order.status}
+                    </td>
+                    <td className="text-center">{order.Date.substring(0, 10)}</td>
+                    <td className="text-center"><Button variant="secondary"><BiPencil/></Button></td>
                     <td className="text-center">
                       <Button variant="danger"
                         onClick={() => {
@@ -70,7 +79,7 @@ const OrderDetailsManagement = () => {
                           }
                         }}
                       >
-                        Delete
+                        <RiDeleteBin6Line />
                       </Button>
                     </td>
                   </tr>
@@ -88,7 +97,7 @@ const OrderDetailsManagement = () => {
                 <Button onClick={() => setPage(page + 1)}>Next</Button>
             </div>
         </Table>
-    </div>
+    </motion.div>
   )
 }
 export default OrderDetailsManagement;

@@ -4,6 +4,9 @@ import { Products } from './ProductManagement';
 import { Button, Card, Col, Container, Row, Table } from 'react-bootstrap';
 import "../pages/Style/productStyle.css";
 import { Customers } from './CustomerManagement';
+import { motion } from 'framer-motion';
+import { RiDeleteBin6Line } from 'react-icons/ri';
+import { BsCart2 } from 'react-icons/bs';
 
 interface Cart{
   _id:string | '',
@@ -88,7 +91,11 @@ const Ordermanagement = () => {
     findAllCustomers();
   },[]);
   return (
-    <Container>
+    <motion.div
+      initial={{ x: -100, y: -100, opacity: 0 }}
+      animate={{ x: 0, y: 0, opacity: 1 }}
+      transition={{ type: "spring", delay: 0.2, duration: 1 }}
+    >
       <Row className='my-2 p-2'>
           <select id="customer" className='form-control w-25'onChange={(e)=>{getCustomerById(e.target.value)}}>
             <option value="">Select Customer</option>
@@ -101,20 +108,20 @@ const Ordermanagement = () => {
             )}
           </select>
         </Row>
-      <Row xs={1} md={2} className="mb-4 main-container">
+      <Row xs={1} md={2} className="mb-2 main-container">
         {products.map((product, index) => (
           <Card key={product._id || index} className='card-style'>
             <Card.Body>
               <Card.Title className='text-capitalize'>{product.productName}</Card.Title>
               <Card.Title>Rs {product.showPrice}</Card.Title>
-              <Card.Text>
-                {product.quantity}
+              <Card.Text className='fs-6 fw-medium'>
+                Qty : {product.quantity}
               </Card.Text>
               <Card.Text>
-                Expire Date {product.expDate}
+                Expire Date : {product.expDate.substring(0, 10)}
               </Card.Text>
               <div>
-                <Button variant="primary" size="sm" 
+                <Button variant="success" size="lg" 
                 onClick={() => 
                   addToCart({
                     _id: product._id,
@@ -126,14 +133,14 @@ const Ordermanagement = () => {
               }
                   
                 >
-                  Add to Cart
+                  <BsCart2 />
                 </Button>
               </div>
             </Card.Body>
           </Card>
         ))}
       </Row>
-      <Row className='d-flex justify-content-center'>
+      <Row className='d-flex justify-content-center mb-2'>
         <Button className='w-25 me-2' onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
         <Button className='w-25 ' onClick={() => setPage(page + 1)}>Next</Button>
       </Row>
@@ -169,7 +176,7 @@ const Ordermanagement = () => {
               <td className="text-center">Rs {(item.total).toFixed(2)}</td> 
               <td className="text-center">
                 <Button variant="danger" size="sm" style={{ marginLeft: 10 }} onClick={() => removeFromCart(item._id)}>
-                  Remove
+                  <RiDeleteBin6Line />
                 </Button>
               </td>
             </tr>
@@ -193,7 +200,7 @@ const Ordermanagement = () => {
         }}>
           Place Order
         </button>
-    </Container>
+    </motion.div>
   )
 }
 export default Ordermanagement;

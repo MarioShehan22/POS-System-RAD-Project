@@ -1,5 +1,5 @@
 const userSchema = require('../model/UserSchema');
-const  jsonwebtoken =require('jsonwebtoken');
+const jsonwebtoken =require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const salt=10;
 
@@ -44,8 +44,40 @@ const deleteById=async (req,resp)=>{
     }
 }
 
+const login = (req, resp) => {
+    console.log(req.body);
+    userSchema.findOne({'email':req.body.email}).then(selectedUser=>{
+        if (selectedUser!==null){
+            bcrypt.compare(req.body.password, selectedUser.password, function(err, result) {
+                if (err){
+                    return resp.status(500).json({'message':'internal server error'});
+                }
+                if(result){
+                    const payload={
+                        email:selectedUser.email,
+                        fullName:selectedUser.fullName,
+                        role:selectedUser.role
+                    }
+                    const secretKey=process.env.SECRET_KEY;
+                    const expiresIn='2h';
+                    if (!secretKey) {
+                        return resp.status(500).json({ 'error': 'Missing secret key' });
+                    }
+                    const token = jsonwebtoken.sign(payload, secretKey, { expiresIn });
+
+                    return resp.status(200).json(token);
+                }else{
+                    return resp.status(401).json({'message':'Password is incorrect!'});
+                }
+            });
+        }else{
+            return resp.status(404).json({'message':'not found!'});
+        }
+    });
+}
 module.exports= {
     register,
     findAll,
-    deleteById
+    deleteById,
+    login
 }

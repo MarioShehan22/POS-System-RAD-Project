@@ -6,11 +6,13 @@ import ProductManagement from "./pages/ProductManagement.tsx";
 import  HomePage from "./pages/HomePage.tsx";
 import Ordermanagement from "./pages/Ordermanagement.tsx";
 import OrderDetailsManagement from "./pages/OrderDetailsManagement.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
 
 function App() {
    return (
     <>
         <Routes>
+            <Route path='/login' element={<LoginPage/>}/>
             <Route path='/' element={<DashboardLayout><HomePage/></DashboardLayout>}/>
             <Route path='/user-page' element={<DashboardLayout><UserManagement/></DashboardLayout>}/>
             <Route path='/customer-page' element={<DashboardLayout><CustomerManagement/></DashboardLayout>}/>

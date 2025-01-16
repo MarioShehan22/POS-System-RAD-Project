@@ -1,7 +1,7 @@
 import {z} from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {Button, Col, Form, Row, Stack} from "react-bootstrap";
+import {Button, Col, Form, Row, Stack, Toast, ToastContainer} from "react-bootstrap";
 import { motion } from 'framer-motion';
 
 const formSchema = z.object({
@@ -38,6 +38,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
 
 
     const onSubmit = handleSubmit((data) => {
+        console.log(data);
         onSave(data); // Call the onSave callback with form data
         reset();
     });
@@ -121,7 +122,16 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
                     </Col>
                 </Row>
             </Form>
-        </Stack>
+            {/* <ToastContainer className="position-static">
+                    <Toast>
+                        <Toast.Header>
+                            <strong className="me-auto">Bootstrap</strong>
+                            <small className="text-muted">just now</small>
+                        </Toast.Header>
+                        <Toast.Body>See? Just like this.</Toast.Body>
+                    </Toast>
+            </ToastContainer> */}
+        </Stack>  
     );
 };
 

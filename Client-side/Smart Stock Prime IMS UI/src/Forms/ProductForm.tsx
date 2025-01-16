@@ -103,15 +103,27 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
                                 <Form.Control  {...field} type="text" placeholder="Enter description"/>
                             )}
                         />
-                    </FloatingLabel>
-                       
+                    </FloatingLabel>                      
                     </Form.Group>
                     {errors.description && <span className="text-danger">{errors.description.message}</span>}
                 </Col>
-                <Col className="d-flex align-items-center">
-                    <Button variant="dark" type="submit" className="w-100">
-                        {buttonText || "Submit"}
-                    </Button>
+                <Col>
+                    <Form.Group className="py-2">
+                        <FloatingLabel
+                            controlId="floatingTextarea"
+                            label="Buy Price"
+                            className="mb-3"
+                        >
+                             <Controller
+                            control={control}
+                            name="buyPrice"
+                            render={({field}) => (
+                                <Form.Control  {...field} type="number" placeholder="Enter Buy Price"/>
+                            )}
+                        />
+                        </FloatingLabel>                      
+                    </Form.Group>
+                    {errors.buyPrice && <span className="text-danger">{errors.buyPrice.message}</span>}
                 </Col>
             </Row>
             <Row>
@@ -170,23 +182,10 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
                     </Form.Group>
                     {errors.expDate && <span className="text-danger">{errors.expDate.message}</span>}
                 </Col>
-                <Col>
-                    <Form.Group className="py-2">
-                        <FloatingLabel
-                            controlId="floatingTextarea"
-                            label="Buy Price"
-                            className="mb-3"
-                        >
-                             <Controller
-                            control={control}
-                            name="buyPrice"
-                            render={({field}) => (
-                                <Form.Control  {...field} type="number" placeholder="Enter Buy Price"/>
-                            )}
-                        />
-                        </FloatingLabel>                      
-                    </Form.Group>
-                    {errors.buyPrice && <span className="text-danger">{errors.buyPrice.message}</span>}
+                <Col className="d-flex align-items-center">
+                    <Button variant="dark" type="submit" className="w-100">
+                        {buttonText || "Add Product"}
+                    </Button>
                 </Col>
             </Row>
             <Row>

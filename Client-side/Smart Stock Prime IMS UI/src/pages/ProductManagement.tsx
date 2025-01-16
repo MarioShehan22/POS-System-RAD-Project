@@ -4,6 +4,8 @@ import PageBadge from "../component/PageBadge/PageBadge.tsx";
 import {Button, Form, Table} from "react-bootstrap";
 import { motion } from 'framer-motion';
 import ProductForm from "../Forms/ProductForm.tsx";
+import { BiPencil } from "react-icons/bi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 export interface Product{
     productName: string,
@@ -86,16 +88,16 @@ const ProductManagement = ()=>{
             {products?.length > 0 ? (
                 products.map((u, index) => (
                     <tr key={index}>
-                        <td className="text-center">{u._id}</td>
-                        <td className="text-center">{u.productName}</td>
+                        <td className="text-center">{index+1}</td>
+                        <td className="text-start">{u.productName}</td>
                         <td>{u.description}</td>
                         <td className="text-center">{u.quantity}</td>
                         <td className="text-center">{u.showPrice}</td>
                         <td className="text-center">{u.sellingPrice}</td>
                         <td className="text-center">{u.buyPrice}</td>
-                        <td className="text-center">{u.expDate}</td>
+                        <td className="text-center">{u.expDate.substring(0, 10)}</td>
                         <td className="text-center">{u.activeState ? 'Active' : 'Inactive'}</td>
-                        <td className="text-center"><Button variant="secondary">Update</Button></td>
+                        <td className="text-center"><Button variant="warning"><BiPencil/></Button></td>
                         <td className="text-center">
                             <Button variant="danger"
                                     onClick={()=>{
@@ -104,7 +106,7 @@ const ProductManagement = ()=>{
                                         }
                                     }}
                             >
-                                Delete
+                                <RiDeleteBin6Line />
                             </Button>
                         </td>
                     </tr>
@@ -118,7 +120,7 @@ const ProductManagement = ()=>{
                 )
                 }
             </tbody>
-            <div className="my-2 ">
+            <div className="my-2 d-flex">
                 <Button className="me-2" onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
                 <Button onClick={() => setPage(page + 1)}>Next</Button>
             </div>

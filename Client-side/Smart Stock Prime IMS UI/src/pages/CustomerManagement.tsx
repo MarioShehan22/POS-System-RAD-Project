@@ -5,6 +5,8 @@ import {Button, Table} from "react-bootstrap";
 import CustomerForm from "../Forms/CustomerForm.tsx";
 import { motion } from 'framer-motion';
 import CustomerUpdateModalForm from "../Forms/CustomerUpdateModalForm.tsx";
+import { BiPencil } from "react-icons/bi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 export interface Customer{
     firstName:string;
@@ -65,7 +67,7 @@ const CustomerManagement = () => {
             <CustomerForm
                 onSave={(CustomerData)=>{createCustomer(CustomerData);}}
             />
-            <Table striped bordered hover size="sm">
+            <Table striped bordered hover size="sm" className="p-2 rounded opacity-75 shadow">
                 <thead>
                     <tr>
                         <th className="text-center">#</th>
@@ -91,14 +93,14 @@ const CustomerManagement = () => {
                              <td className="text-center">{u.phoneNumber}</td>
                              <td className="text-center">{u.activeState ? 'Active' : 'Inactive'}</td>
                              <td className="text-center">
-                                <Button variant="secondary"
+                                <Button variant="warning"
                                     onClick={
                                         () => {
                                             setUpdateCustomers(u);
                                             setModalShow(true);
                                         }}
                                 >
-                                    Update
+                                    <BiPencil/>
                                 </Button></td>
                              <td className="text-center">
                                 <Button variant="danger"
@@ -108,7 +110,7 @@ const CustomerManagement = () => {
                                             }
                                         }}
                                 >
-                                    Delete
+                                    <RiDeleteBin6Line />
                                 </Button>
                              </td>
                         </tr>

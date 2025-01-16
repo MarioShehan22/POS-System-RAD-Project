@@ -5,6 +5,8 @@ import {Button, Table} from "react-bootstrap";
 import UserForm from "../Forms/UserForm.tsx";
 import {motion} from "framer-motion";
 import { UserUpdateModalForm } from "../Forms/UserUpdateModalForm.tsx";
+import { BiPencil } from "react-icons/bi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 export interface User{
     fullName:string;
@@ -89,14 +91,14 @@ const UserManagement = () => {
                             <td className="text-center">{u.email}</td>
                             <td className="text-center">{u.activeState ? 'Active' : 'Inactive'}</td>
                             <td className="text-center">
-                                <Button variant="secondary"
+                                <Button variant="warning"
                                     onClick={
                                         () => {
                                             setUpdateUser(u);
                                             setModalShow(true);
                                         }}
                                 >
-                                    Update
+                                    <BiPencil/>
                                 </Button>
                             </td>
                             <td className="text-center">
@@ -107,7 +109,7 @@ const UserManagement = () => {
                                             }
                                         }}
                                 >
-                                    Delete
+                                    <RiDeleteBin6Line />
                                 </Button>
                             </td>
                         </tr>

@@ -19,7 +19,7 @@ const NavBar = () => {
                         <Link to="/Order-Details-page" className="text-decoration-none text-body my-element">Order Detils</Link>
                     </Nav>
                     <Nav className="d-flex justify-content-between align-items-center">
-                        <Nav.Link href="#login" className="justify-content-end flex-grow">LogIn</Nav.Link>
+                        <Link to="/login" className="text-decoration-none text-body my-element">LogIn</Link>
                     </Nav>
                 </Container>
             </Navbar>
