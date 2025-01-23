@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import { Products } from './ProductManagement';
-import { Button, Card, Col, Container, Row, Table } from 'react-bootstrap';
+import { Button, Card, Col, Container, Form, Row, Table } from 'react-bootstrap';
 import "../pages/Style/productStyle.css";
 import { Customers } from './CustomerManagement';
 import { motion } from 'framer-motion';
@@ -96,18 +96,26 @@ const Ordermanagement = () => {
       animate={{ x: 0, y: 0, opacity: 1 }}
       transition={{ type: "spring", delay: 0.2, duration: 1 }}
     >
-      <Row className='my-2 p-2'>
-          <select id="customer" className='form-control w-25'onChange={(e)=>{getCustomerById(e.target.value)}}>
+      <Row className="my-2 p-2">
+        <Col xs={12} md={4}>
+          <Form.Select
+            id="customer"
+            className="form-control w-100" // Adjust width as needed
+            onChange={(e) => getCustomerById(e.target.value)}
+          >
             <option value="">Select Customer</option>
             {customers.length > 0 && (
               <>
                 {customers.map((customer, index) => (
-                  <option key={index} value={customer._id}>{customer.firstName}</option>
+                  <option key={index} value={customer._id}>
+                    {customer.firstName}
+                  </option>
                 ))}
               </>
             )}
-          </select>
-        </Row>
+          </Form.Select>
+        </Col>
+      </Row>
       <Row xs={1} md={2} className="mb-2 main-container">
         {products.map((product, index) => (
           <Card key={product._id || index} className='card-style'>
@@ -121,19 +129,20 @@ const Ordermanagement = () => {
                 Expire Date : {product.expDate.substring(0, 10)}
               </Card.Text>
               <div>
-                <Button variant="success" size="lg" 
-                onClick={() => 
-                  addToCart({
-                    _id: product._id,
-                    name: product.productName,
-                    unitPrice: product.sellingPrice,
-                    qty: 1, // Default quantity to 1
-                    total: product.sellingPrice,
-                }) 
-              }
-                  
+              <Button
+                  variant="success"
+                  size="lg"
+                  onClick={() =>
+                    addToCart({
+                      _id: product._id,
+                      name: product.productName,
+                      unitPrice: product.sellingPrice,
+                      qty: 1, // Default quantity to 1
+                      total: product.sellingPrice,
+                    })
+                  }
                 >
-                  <BsCart2 />
+                  <BsCart2 /> Add to Cart
                 </Button>
               </div>
             </Card.Body>

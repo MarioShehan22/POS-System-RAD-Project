@@ -20,21 +20,20 @@ interface Orders {
 }
 const OrderDetailsManagement = () => {
   const [orders, setOrders]=useState<Orders[]>([]);
-  const [searchText, setSearchText] = useState('');
+  //const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [size] = useState(8); 
   const findAllOrders = async ()=> {
     try {
       const response = await axios.get(`http://localhost:3000/api/v1/orders/find-all?page=${page}&size=${size}`);
       setOrders(response.data.data.dataList);
-      console.log(response.data.data.dataList);
     }catch (error){
       console.log(error);
     }
   }
   useEffect(()=>{
     findAllOrders();
-  },[[searchText, page]]);
+  },[[page]]);
   return (
     <motion.div
       initial={{ x: -100, y: -100, opacity: 0 }}

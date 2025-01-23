@@ -33,7 +33,7 @@ const deleteById = async(req,resp) =>{
         resp.status(500).json({error:e.message})
     }
 }
-const updateProduct = async (req,resp)=>{// admin,manager
+const updateProduct = async (req,resp)=>{// admin
     try{
         const updatedProduct = await ProductSchema.findByIdAndUpdate(
             req.params.id,
@@ -50,9 +50,44 @@ const updateProduct = async (req,resp)=>{// admin,manager
         resp.status(500).json({error:e.message});
     }
 }
+
+const expSoonProduct = async (req,resp)=>{// admin
+    try{
+        const now = new Date();
+        const currentDate = new Date(now); 
+
+        const expirationDate = new Date(currentDate); 
+        expirationDate.setDate(currentDate.getDate() + 30); 
+
+        const currentDateString = currentDate.toISOString().split('T')[0];
+        const expirationDateString = expirationDate.toISOString().split('T')[0];
+
+        // Find products with an expiration date within the threshold
+        const expiringProducts = await ProductSchema.aggregate([
+            {
+              $match: {
+                expDate: { 
+                  $gte: currentDateString, 
+                  $lte: expirationDateString 
+                }
+              }
+            }
+          ]);
+
+        console.log(currentDateString);
+        console.log(expirationDateString);
+        
+        console.log(expiringProducts); // Log the found products
+        resp.status(200).json(expiringProducts);
+    }catch(e){
+        resp.status(500).json({ error:e.message });
+    }
+}
+
 module.exports = {
     create,
     loadAllProduct,
     deleteById,
-    updateProduct
+    updateProduct,
+    expSoonProduct
 }

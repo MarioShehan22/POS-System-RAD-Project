@@ -7,4 +7,5 @@ router.post('/create', productController.create);
 router.put('/update/:id',productController.updateProduct);
 router.get('/find-all', productController.loadAllProduct);
 router.delete('/delete/:id', productController.deleteById);
+router.get('/expiring-soon', productController.expSoonProduct);
 module.exports=router;
