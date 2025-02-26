@@ -5,7 +5,8 @@ const salt=10;
 
 const register = async (req, resp) => {
     try {
-        const result = await userSchema.findOne({ 'email': req.body.email }).maxTimeMS(20000);
+        console.log(req.body);
+        const result = await userSchema.findOne({'email': req.body.email}).maxTimeMS(20000);
         if (!result) {
             const hash = await bcrypt.hash(req.body.password, salt);
             const user = new userSchema({
@@ -45,7 +46,6 @@ const deleteById=async (req,resp)=>{
 }
 
 const login = (req, resp) => {
-    console.log(req.body);
     userSchema.findOne({'email':req.body.email}).then(selectedUser=>{
         if (selectedUser!==null){
             bcrypt.compare(req.body.password, selectedUser.password, function(err, result) {
@@ -65,7 +65,7 @@ const login = (req, resp) => {
                     }
                     const token = jsonwebtoken.sign(payload, secretKey, { expiresIn });
 
-                    return resp.status(200).json(token);
+                    return resp.status(200).json({token,payload});
                 }else{
                     return resp.status(401).json({'message':'Password is incorrect!'});
                 }

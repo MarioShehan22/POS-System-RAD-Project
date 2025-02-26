@@ -5,18 +5,19 @@ import { motion } from 'framer-motion';
 import { BiPencil } from 'react-icons/bi';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 interface Orders {
-  _id:String;
+  _id:String |'';
   products:[
-    _id:String,
-    name: string,
-    unitPrice: number,
-    qty: number,
+    _id:String |'',
+    id:string|'',
+    name: string|'',
+    unitPrice: number|0,
+    qty: number|0,
     total: number
   ];
   total:number | 0 ;
-  status:string;
-  Customer:string;
-  Date:string;
+  status:string|'';
+  Customer:string|'';
+  Date:string|'';
 }
 const OrderDetailsManagement = () => {
   const [orders, setOrders]=useState<Orders[]>([]);
@@ -36,9 +37,10 @@ const OrderDetailsManagement = () => {
   },[[page]]);
   return (
     <motion.div
-      initial={{ x: -100, y: -100, opacity: 0 }}
-      animate={{ x: 0, y: 0, opacity: 1 }}
-      transition={{ type: "spring", delay: 0.2, duration: 1 }}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
     >
        <Table striped bordered hover size="sm" className='my-2'>
             <thead>
@@ -63,7 +65,7 @@ const OrderDetailsManagement = () => {
                         <li key={p._id}> {p.name}   {p.qty}</li>
                       ))}
                     </td>
-                    <td className="text-center">{order.Customer._id ||order.Customer }</td>  {/* Assuming 'name' is the property for customer name */}
+                    <td className="text-center">{order.Customer?._id ||order.Customer }</td>  {/* Assuming 'name' is the property for customer name */}
                     <td className="text-center">{order.total}</td>
                     <td className="text-center">
                       {order.status}

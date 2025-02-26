@@ -62,9 +62,10 @@ const UserManagement = () => {
 
     return (
         <motion.div
-        initial={{ x: -100, y: -100, opacity: 0 }}
-        animate={{ x: 0.2, y: 0.2, opacity: 1 }}
-        transition={{ type: "spring", delay: 0.5, duration: 1 }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
         >
             <PageBadge
                 title='User Management'

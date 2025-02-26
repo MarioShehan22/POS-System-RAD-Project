@@ -57,13 +57,12 @@ const CustomerManagement = () => {
 
     return (
         <motion.div
-            initial={{ x: -100, y: -100, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ type: "spring", delay: 0.2, duration: 1 }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
         >
-            <PageBadge
-                title='Customer Management'
-            />
+            <h2 className="text-start fw-bold my-3">Customer Management</h2>
             <CustomerForm
                 onSave={(CustomerData)=>{createCustomer(CustomerData);}}
             />

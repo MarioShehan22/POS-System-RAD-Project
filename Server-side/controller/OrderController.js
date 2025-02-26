@@ -4,8 +4,6 @@ const ProductSchema = require('../model/ProductSchema');
 const mongoose = require('mongoose');
 
 const saveOrder = async (req, resp) => {
-  console.log(req.body);
-
   try {
     // 1. Validate Order Data (Optional but recommended)
     // You can implement data validation using libraries like Joi or Ajv
@@ -18,7 +16,6 @@ const saveOrder = async (req, resp) => {
         return resp.status(400).json({ message: "Invalid Customer ID format" });
       }
     }
-
     // 3. Create New Order Object
     const newOrder = {
       products: req.body.products,
@@ -143,10 +140,8 @@ const ordersByCustomer = async (req,resp)=>{
         if (!user) {
             return resp.status(404).json({ message: "No Customer found with this id" });
         }
-
         const orders = await Order.find({"Customer._id":customerId});
         const total = await Order.find({"Customer._id":customerId}).countDocuments();
-    
         if (!orders) {
             return resp.status(404).json({ message: "No order found for this Customer", });
         }
@@ -163,7 +158,7 @@ const findIncomeByCurrentMonth = async (req,resp)=>{ // admin, manager
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
         const data = await Order.find({
-        Date: { $gte: startOfMonth, $lt: endOfMonth },
+            Date: { $gte: startOfMonth, $lt: endOfMonth },
         });
 
         const incomebyDay  = data.reduce((acc, payment)=>{
@@ -207,6 +202,7 @@ const topSellingProduct = async(req,resp) =>{
           {
             $group: {
                 _id: '$products._id', // Group by product ID
+                id: { $first: '$products.id' }, 
                 productName: { $first: '$products.name' },
                 //productName: '$products.name', // Include 'name' for projection
                 quantitySold: { $sum: '$products.qty' } // Sum quantities
@@ -215,7 +211,7 @@ const topSellingProduct = async(req,resp) =>{
           {
             $project: {
               _id: 0, // Exclude unnecessary field from the output
-              productId: '$_id',
+              productId: '$id',
               productName: 1,
               quantitySold: 1
             }
@@ -229,6 +225,7 @@ const topSellingProduct = async(req,resp) =>{
         ];
     
         const topSellingProducts = await Order.aggregate(pipeline);
+        console.log(topSellingProduct);
         resp.status(200).json(topSellingProducts);
     } catch (error) {
         console.error(error);

@@ -7,6 +7,7 @@ defaults.responsive = true;
 defaults.plugins.title.display = true;
 defaults.plugins.title.align = "start";
 defaults.plugins.title.color = "black";
+// Chart.overrides.line.spanGaps = true;
 
 const IncomeByDate = () => {
     const [datas,setData] = useState([]);
@@ -17,7 +18,6 @@ const IncomeByDate = () => {
         try {
             const response = await axios.get('http://localhost:3000/api/v1/orders/income-by-month');
             setData(response.data.data.income);
-            console.log(datas);
         }catch (e) {
             console.log(e)
         }
@@ -30,20 +30,56 @@ const IncomeByDate = () => {
         labels:orderLabels,
         datasets:[
             {
-                label:'Monthly Income Data',
-                data:orderData,
-                fill:false
+                label: 'Daily Income', // Add a label for the dataset
+                data: orderData,
+                fill: false,
+                borderColor: 'rgb(0, 60, 255)',
+                tension: 0.3, //  A bit of tension for smoother lines
+                cubicInterpolationMode: 'monotone',
+                borderWidth: 2
             }
-        ]
+        ],
+        
     }
 
-    const options={
-        scales:{
-            y:{
-                beginAtZero:true
-            }
+    const options = {
+        responsive: true, // Make chart responsive
+        plugins: {
+            title: {
+                display: true,
+                text: 'Income By Date',
+                fullSize:true,
+                align: 'start', // Align title to the start
+                color: 'black',
+                font: { // Change title font properties here
+                    size: 15, // Change title size here
+                    family: 'Arial', // Example font family
+                    weight: 'bold' // Example font weight
+                }
+            },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: { // Add a title to the y-axis
+                    display: true,
+                    text: 'Income'
+                }
+            },
+            x: { // Add a title to the x-axis
+                title: {
+                    display: true,
+                    text: 'Date'
+                },
+                grid: { // Add grid configuration here
+                    color: 'rgba(0, 0, 0, 0.1)', // Example grid line color (light gray)
+                    borderColor: 'rgba(0, 0, 0, 0.1)', // Example grid border color
+                    borderDash: [2, 2] // Dashed line style
+                }
+            },
         }
-    }
+    };
+
 
     return (
         <>

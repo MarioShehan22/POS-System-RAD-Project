@@ -2,6 +2,7 @@
     height: 100vh; /* Equivalent to h-screen */
     width: 100vw;  /* Equivalent to w-screen */
     display: flex; /* Equivalent to flex */
+    color: rgb(105, 105, 105);
 }
 
 .inner-container {

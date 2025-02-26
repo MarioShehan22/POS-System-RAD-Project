@@ -17,7 +17,6 @@ const IncomeByMonth = () => {
         try {
             const response = await axios.get('http://localhost:3000/api/v1/orders/income-by-year');
             setData(response.data.data.income);
-            console.log(datas);
         }catch (e) {
             console.log(e)
         }
@@ -30,7 +29,7 @@ const IncomeByMonth = () => {
         labels:orderLabels,
         datasets:[
             {
-                label:'Daily Income Data',
+                label:'Monthly Income Data',
                 data:orderData,
                 fill:false
             }

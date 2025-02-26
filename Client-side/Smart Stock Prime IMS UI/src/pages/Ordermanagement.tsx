@@ -10,6 +10,7 @@ import { BsCart2 } from 'react-icons/bs';
 
 interface Cart{
   _id:string | '',
+  id:string | '',
   name:string| '',
   unitPrice:number| 0,
   qty:number| 0,
@@ -23,6 +24,8 @@ const Ordermanagement = () => {
   const [size] = useState(6); 
   const [selectedCustomer,setSelectedCustomer] = useState<Customers>(Object);
   const [customers, setCustomers]=useState<Customers[]>([]);
+  const [totalItems,setTotalItems] = useState(0);
+  let totalPages;
   //const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
 
   const findAllProducts = async ()=> {
@@ -37,6 +40,8 @@ const Ordermanagement = () => {
   const findAllCustomers= async ()=>{
     const response = await axios.get('http://localhost:3000/api/v1/customers/find-all');
     setCustomers(response.data.data.dataList);
+    setTotalItems(response.data.data.count);
+    totalPages = Math.ceil(12 / size); 
     console.log(response.data.data.dataList); 
   }
   const getCustomerById= async (id:string)=>{
@@ -92,9 +97,10 @@ const Ordermanagement = () => {
   },[]);
   return (
     <motion.div
-      initial={{ x: -100, y: -100, opacity: 0 }}
-      animate={{ x: 0, y: 0, opacity: 1 }}
-      transition={{ type: "spring", delay: 0.2, duration: 1 }}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
     >
       <Row className="my-2 p-2">
         <Col xs={12} md={4}>
@@ -135,6 +141,7 @@ const Ordermanagement = () => {
                   onClick={() =>
                     addToCart({
                       _id: product._id,
+                      id:product.id,
                       name: product.productName,
                       unitPrice: product.sellingPrice,
                       qty: 1, // Default quantity to 1
@@ -151,7 +158,7 @@ const Ordermanagement = () => {
       </Row>
       <Row className='d-flex justify-content-center mb-2'>
         <Button className='w-25 me-2' onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
-        <Button className='w-25 ' onClick={() => setPage(page + 1)}>Next</Button>
+        <Button className='w-25 ' onClick={() => setPage(page + 1)} disabled={page === totalPages}>Next</Button>
       </Row>
       
       <h2>Cart Items</h2>

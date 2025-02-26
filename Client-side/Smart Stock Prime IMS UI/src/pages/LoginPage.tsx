@@ -3,7 +3,7 @@ import { Button, Col, Container, FloatingLabel, Form, Row } from 'react-bootstra
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
     email: z.string().email("Invalid email format").min(1, "Email is required"),
@@ -12,15 +12,12 @@ const formSchema = z.object({
 
 export type UserFormData = z.infer<typeof formSchema>;
 
-// type Props = {
-
-// }
 const LoginPage = () => {
     const {
             control, // Use control instead of register for improved type safety
             handleSubmit,
             formState: { errors },
-            reset,
+            // reset,
         } = useForm<UserFormData>({
             resolver: zodResolver(formSchema),
             defaultValues: {
@@ -30,24 +27,36 @@ const LoginPage = () => {
         }
     );
     const navigate = useNavigate();
-    const onSubmit = handleSubmit( async (date) => {
-        //event.preventDefault(); // Prevent default form submission behavior
-        //http://localhost:3000/api/v1/users/login
-        console.log(date);
-        // Your form submission logic here
-        try{
-            const response = await axios.post('http://localhost:3000/api/v1/users/log-in',date);
-            if(response.status==200){
-                const expirationDate = new Date();
-                expirationDate.setDate(expirationDate.getDate()+2);
-                const cookieValue=encodeURIComponent('token')+'=' +encodeURIComponent(response.data)+'; expires='+expirationDate.toUTCString()+'; path=/';
-                document.cookie=cookieValue;
-                navigate('/');
+    //const location = useLocation();
+    
+    const onSubmit = handleSubmit(async (data) => {
+        try {
+            const response = await axios.post('http://localhost:3000/api/v1/users/log-in', data);
+            if (response.status === 200) {
+              // Assuming response.data.token and response.data.payload are available
+              const token = response.data.token;
+              const userData = response.data.payload; 
+        
+              // Set token in cookie (adjust expiration as needed)
+              const expirationDate = new Date();
+              expirationDate.setTime(expirationDate.getTime() + (2 * 24 * 60 * 60 * 1000)); // 2 days in milliseconds
+              document.cookie = `token=${token}; expires=${expirationDate.toUTCString()}; path=/`; 
+        
+              // Store user data in local storage
+              localStorage.setItem('userData', JSON.stringify(userData));
+              // Redirect based on user role
+             
+              if (userData.role === "Admin") {
+                navigate("/"); 
+              } else {
+                navigate("/Product-page"); 
+              }
+            } else {
+              console.error('Login failed:', response.status, response.statusText);
             }
-            reset();
-        }catch (e){
-            console.log(e);
-        }
+          } catch (error) {
+            console.error('Login error:', error);
+          }
     });
   return (
     <Container>
@@ -58,7 +67,6 @@ const LoginPage = () => {
                 <Col className='w-100'>
                     <Form.Group className="py-1">
                         <FloatingLabel
-                            controlId="floatingTextarea"
                             label="email"
                             className="mb-2"
                         >
@@ -69,13 +77,13 @@ const LoginPage = () => {
                                 <Form.Control isInvalid={!!errors.email} {...field} type="email" placeholder="Enter email"/>
                             )}
                         />
+                        {errors.email && (<Form.Control.Feedback type="invalid">{errors.email.message}</Form.Control.Feedback>)}
                         </FloatingLabel>
                     </Form.Group>
                 </Col>
                 <Col className='w-100'>
                     <Form.Group className="py-1">
                         <FloatingLabel
-                            controlId="floatingTextarea"
                             label="password"
                             className="mb-2"
                         >
@@ -86,6 +94,7 @@ const LoginPage = () => {
                                 <Form.Control  isInvalid={!!errors.password} {...field} type="password" placeholder="Enter password"/>
                             )}
                         />
+                         {errors.password && (<Form.Control.Feedback type="invalid">{errors.password.message}</Form.Control.Feedback>)}
                         </FloatingLabel>
                     </Form.Group>
                 </Col>

@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const ProductSchema= new mongoose.Schema({
+    id:{
+        type:String,
+        unique: true,
+        required:true
+    },
     productName:{
         type:String,
         required:true
@@ -26,7 +31,7 @@ const ProductSchema= new mongoose.Schema({
         required:true
     },
     expDate:{
-        type:Date,
+        type:String,
         required:true
     },
     activeState:{

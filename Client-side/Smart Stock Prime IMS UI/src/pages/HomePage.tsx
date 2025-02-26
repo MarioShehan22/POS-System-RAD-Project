@@ -1,5 +1,3 @@
-import '../component/EmblaCarousel/embla.css'
-import  "../component/EmblaCarousel/embla.css";
 import { Col, Container, Row } from 'react-bootstrap';
 import PageBadge from '../component/PageBadge/PageBadge';
 import IncomeByDate from '../component/IncomeByDate';
@@ -8,9 +6,7 @@ import MostSellingProduct from '../component/MostSellingProduct';
 import ExpireDateSoonProduct from '../component/ExpireDateSoonProduct';
 
 const HomePage = () => {
- 
-
- 
+  
   return (
     <>
       <PageBadge title='Smart Dashboard'/>
@@ -20,9 +16,7 @@ const HomePage = () => {
           <Col><IncomeByMonth/></Col>
         </Row>
       </Container>
-      <h3 className='text-center mt-2'>Most Selling Product</h3>
       <MostSellingProduct/>
-      <h3 className='text-center'>Expire Date Soon Product</h3>
       <ExpireDateSoonProduct/>
     </>
   )

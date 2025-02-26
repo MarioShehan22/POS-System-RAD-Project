@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import ProductForm from "../Forms/ProductForm.tsx";
 import { BiPencil } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import ProductUpdateModalForm  from "../Forms/ProductUpdateFormModa;.tsx";
 
 export interface Product{
     productName: string,
@@ -15,15 +16,28 @@ export interface Product{
     showPrice: number,
     buyPrice: number,
     expDate: string,
-    activeState: boolean | undefined;
+    activeState: boolean;
 }
-export type Products = Product & {_id:string};
+export type Products = Product & {_id:string,id:string};
 
 const ProductManagement = ()=>{
    const [products, setProducts]=useState<Products[]>([]);
    const [searchText, setSearchText] = useState('');
    const [page, setPage] = useState(1);
    const [size] = useState(6); 
+   const [updateProduct, setUpdateProduct]=useState<Products>({
+           _id:"",
+           id:"",
+           productName: "",
+           quantity: 0,
+           description:"",
+           sellingPrice: 0,
+           showPrice: 0,
+           buyPrice: 0,
+           expDate:"",
+           activeState: false,
+       });
+       const [modalShow, setModalShow] = useState<boolean>(false);
     const findAllProducts = async ()=> {
         try {
             const response = await axios.get(`http://localhost:3000/api/v1/products/find-all?searchText=${searchText}&page=${page}&size=${size}`);
@@ -33,15 +47,15 @@ const ProductManagement = ()=>{
             console.log(error);
         }
     }
-    // const createProduct = async (CustomerData:Products) => {
-    //     try {
-    //         const response = await axios.post('http://localhost:3000/api/v1/customers/create',CustomerData);
-    //         console.log(response.data.data);
-    //         findAllProducts();
-    //     }catch (error){
-    //         console.log(error);
-    //     }
-    // }
+    const createProduct = async (ProductData:Product) => {
+        try {
+            const response = await axios.post('http://localhost:3000/api/v1/products/create',ProductData);
+            console.log(response.data.data);
+            findAllProducts();
+        }catch (error){
+            console.log(error);
+        }
+    }
     const deleteProduct= async (id: string)=>{
         await axios.delete('http://localhost:3000/api/v1/products/delete/'+id);
         findAllProducts();
@@ -52,15 +66,16 @@ const ProductManagement = ()=>{
 
   return (
     <motion.div
-        initial={{ x: -100, y: -100, opacity: 0 }}
-        animate={{ x: 0, y: 0, opacity: 1 }}
-        transition={{ type: "spring", delay: 0.2, duration: 1 }}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
     >
         <PageBadge
             title='Product Management'
         />
         <ProductForm
-            onSave={(ProductData)=>{console.log(ProductData);}}
+            onSave={(ProductData)=>{createProduct(ProductData);}}
         />
         <Form className="my-2">
            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -88,7 +103,7 @@ const ProductManagement = ()=>{
             {products?.length > 0 ? (
                 products.map((u, index) => (
                     <tr key={index}>
-                        <td className="text-center">{index+1}</td>
+                        <td className="text-center">{u.id}</td>
                         <td className="text-start">{u.productName}</td>
                         <td>{u.description}</td>
                         <td className="text-center">{u.quantity}</td>
@@ -97,7 +112,17 @@ const ProductManagement = ()=>{
                         <td className="text-center">{u.buyPrice}</td>
                         <td className="text-center">{u.expDate.substring(0, 10)}</td>
                         <td className="text-center">{u.activeState ? 'Active' : 'Inactive'}</td>
-                        <td className="text-center"><Button variant="warning"><BiPencil/></Button></td>
+                        <td className="text-center">
+                            <Button variant="warning"
+                                onClick={
+                                    () => {
+                                        setUpdateProduct(u);
+                                        setModalShow(true);
+                                    }}
+                            >
+                                <BiPencil/>
+                            </Button>
+                        </td>
                         <td className="text-center">
                             <Button variant="danger"
                                     onClick={()=>{
@@ -125,6 +150,11 @@ const ProductManagement = ()=>{
                 <Button onClick={() => setPage(page + 1)}>Next</Button>
             </div>
         </Table>
+        {modalShow && <ProductUpdateModalForm
+              data={updateProduct}
+              show={modalShow}
+              onHide={() => setModalShow(false)}
+          />}
     </motion.div>
   )
 }
