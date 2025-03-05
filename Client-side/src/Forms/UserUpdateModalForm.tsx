@@ -1,10 +1,9 @@
-import React from 'react'
 import { UpdateUser } from '../pages/UserManagement';
 import {  z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import axios from "axios";
 import { Controller, useForm } from 'react-hook-form';
+import AxiosInstance from '../confige/AxiosInstance';
 
 const formSchema = z.object({
     email: z.string().email("Invalid email format").min(1, "Email is required"),
@@ -13,6 +12,7 @@ const formSchema = z.object({
     password: z.string().min(8, "Password is required"),
     role: z.string().min(2, "Role is required"),
 });
+
 export type UserFormData = z.infer<typeof formSchema>;
 
 type Props = {
@@ -38,7 +38,7 @@ export const UserUpdateModalForm = ({ data, show, onHide }:Props) => {
     });
 
     const onSubmit = handleSubmit( async (formData) => {
-        await axios.put(`http://localhost:3000/api/v1/users/update/${data._id}`, formData);
+        await AxiosInstance.put(`/users/update/${data._id}`, formData);
         reset();
         onHide();
     });

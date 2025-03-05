@@ -45,7 +45,7 @@ const UserForm = ({ onSave, title, buttonText }: Props) => {
 
     return (
         <Stack direction="horizontal" gap={3}>
-            <Form onSubmit={onSubmit} className="w-100">
+            <Form onSubmit={onSubmit} className="w-100 p-2 rounded opacity-75 shadow mb-2">
                 <Row>
                     <Col>
                         {title && <h2>{title}</h2>}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from "axios";
 import { Line } from 'react-chartjs-2';
 import {defaults} from "chart.js/auto";
+import AxiosInstance from '../confige/AxiosInstance';
 
 defaults.responsive = true;
 defaults.plugins.title.display = true;
@@ -15,7 +16,7 @@ const IncomeByMonth = () => {
     },[]);
     const getChartData = async () =>{
         try {
-            const response = await axios.get('http://localhost:3000/api/v1/orders/income-by-year');
+            const response = await AxiosInstance.get('/orders/income-by-year');
             setData(response.data.data.income);
         }catch (e) {
             console.log(e)

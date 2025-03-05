@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Card, Container, Row, Col, Button, Spinner, Alert } from 'react-bootstrap';
 import { ChevronLeft, ChevronRight, AlertCircle} from 'lucide-react';
 import axios from "axios";
+import AxiosInstance from '../confige/AxiosInstance';
+
 interface MostSellingProduct{
   productId:string;
   productName:string;
@@ -42,7 +44,7 @@ const MostSellingProduct = () => {
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          const response = await axios.get("http://localhost:3000/api/v1/orders/top-selling");
+          const response = await AxiosInstance.get("/orders/top-selling");
           setProducts(response.data);
           setError("");
         } catch (error) {

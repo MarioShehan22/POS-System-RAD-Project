@@ -5,6 +5,7 @@ import axios from "axios";
 import { z } from 'zod';
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import AxiosInstance from '../confige/AxiosInstance';
 
 const formSchema = z.object({
     email: z.string().email("Invalid email format").min(1, "Email is required"),
@@ -39,7 +40,7 @@ const CustomerUpdateModalForm = ({ data, show, onHide }:Props) => {
         });
         
     const onSubmit = handleSubmit( async (formData) => {
-        await axios.put(`http://localhost:3000/api/v1/customers/update/${data._id}`, formData);
+        await AxiosInstance.put(`/customers/update/${data._id}`, formData);
         reset();
         onHide();
     });

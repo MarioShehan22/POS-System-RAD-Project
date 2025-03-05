@@ -1,12 +1,11 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
-import PageBadge from "../component/PageBadge/PageBadge.tsx";
 import {Button, Table} from "react-bootstrap";
 import UserForm from "../Forms/UserForm.tsx";
 import {motion} from "framer-motion";
 import { UserUpdateModalForm } from "../Forms/UserUpdateModalForm.tsx";
 import { BiPencil } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import AxiosInstance from "../confige/AxiosInstance.ts";
 
 export interface User{
     fullName:string;
@@ -36,7 +35,7 @@ const UserManagement = () => {
     const [modalShow, setModalShow] = useState<boolean>(false);
     const findAllUsers = async ()=> {
         try {
-            const response = await axios.get('http://localhost:3000/api/v1/users/find-all');
+            const response = await AxiosInstance.get('/users/find-all');
             setUser(response.data);
             console.log(response);
         }catch (error){
@@ -45,7 +44,7 @@ const UserManagement = () => {
     }
     const createUser = async (userData:user) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/users/register',userData);
+            const response = await AxiosInstance.post('/users/register',userData);
             console.log(response);
             findAllUsers();
         }catch (error){
@@ -53,7 +52,7 @@ const UserManagement = () => {
         }
     }
     const deleteUser= async (id: string)=>{
-        await axios.delete('http://localhost:3000/api/v1/users/delete/'+id);
+        await AxiosInstance.delete('/users/delete/'+id);
         findAllUsers();
     }
     useEffect(()=>{
@@ -67,9 +66,8 @@ const UserManagement = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
         >
-            <PageBadge
-                title='User Management'
-            />
+        
+        <h2 className="text-start fw-bold my-3">User Management</h2>
             <UserForm
                 onSave={(userData)=>{createUser(userData);}}
             />

@@ -3,7 +3,7 @@ import { Button, Col, Container, FloatingLabel, Form, Row } from 'react-bootstra
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import axios from "axios";
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
     email: z.string().email("Invalid email format").min(1, "Email is required"),
@@ -45,8 +45,8 @@ const LoginPage = () => {
               // Store user data in local storage
               localStorage.setItem('userData', JSON.stringify(userData));
               // Redirect based on user role
-             
-              if (userData.role === "Admin") {
+
+              if (response.data.payload.role === "Admin") {
                 navigate("/"); 
               } else {
                 navigate("/Product-page"); 

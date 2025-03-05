@@ -7,6 +7,7 @@ import ProductForm from "../Forms/ProductForm.tsx";
 import { BiPencil } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import ProductUpdateModalForm  from "../Forms/ProductUpdateFormModa;.tsx";
+import AxiosInstance from "../confige/AxiosInstance.ts";
 
 export interface Product{
     productName: string,
@@ -40,7 +41,7 @@ const ProductManagement = ()=>{
        const [modalShow, setModalShow] = useState<boolean>(false);
     const findAllProducts = async ()=> {
         try {
-            const response = await axios.get(`http://localhost:3000/api/v1/products/find-all?searchText=${searchText}&page=${page}&size=${size}`);
+            const response = await AxiosInstance.get(`/products/find-all?searchText=${searchText}&page=${page}&size=${size}`);
             setProducts(response.data.data.dataList);
             console.log(response.data.data.dataList);
         }catch (error){
@@ -49,7 +50,7 @@ const ProductManagement = ()=>{
     }
     const createProduct = async (ProductData:Product) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/products/create',ProductData);
+            const response = await AxiosInstance.post('/products/create',ProductData);
             console.log(response.data.data);
             findAllProducts();
         }catch (error){
@@ -57,7 +58,7 @@ const ProductManagement = ()=>{
         }
     }
     const deleteProduct= async (id: string)=>{
-        await axios.delete('http://localhost:3000/api/v1/products/delete/'+id);
+        await AxiosInstance.delete('/products/delete/'+id);
         findAllProducts();
     }
     useEffect(()=>{
@@ -71,9 +72,8 @@ const ProductManagement = ()=>{
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
     >
-        <PageBadge
-            title='Product Management'
-        />
+       <h2 className="text-start fw-bold my-3">Product Management</h2>
+
         <ProductForm
             onSave={(ProductData)=>{createProduct(ProductData);}}
         />
@@ -83,7 +83,7 @@ const ProductManagement = ()=>{
             </Form.Group>
         </Form>
         
-        <Table striped bordered hover size="sm">
+        <Table striped bordered hover size="sm" className="p-2 rounded opacity-75 shadow">
             <thead>
                 <tr className="fs-6 fw-medium">
                     <th className="text-center">#</th>

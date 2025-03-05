@@ -49,7 +49,7 @@ const ProductForm = ({ onSave, title, buttonText }: Props) => {
         <Stack direction="horizontal" gap={3} className="border">
             <form
                 onSubmit={onSubmit}
-                className="w-100"
+                className="w-100 p-2 rounded opacity-75 shadow"
             >
                 <Row>
                     <Col>

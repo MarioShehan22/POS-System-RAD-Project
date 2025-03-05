@@ -1,71 +1,54 @@
-import React from 'react';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Col, Form, Modal, Row, Spinner } from 'react-bootstrap';
-import axios, { AxiosError } from "axios";
-import { Controller, useForm } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
+import { Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
+import { AxiosError } from "axios";
 import { toast } from 'react-toastify';
 import { Products } from '../pages/ProductManagement';
+import AxiosInstance from '../confige/AxiosInstance';
 
-// Zod schema with better validation
-const formSchema = z.object({
-    productName: z.string()
-        .min(1, "Product name is required")
-        .max(100, "Product name must be less than 100 characters"),
-    quantity: z.number()
-        .min(0, "Quantity cannot be negative")
-        .max(999999, "Quantity is too large"),
-    description: z.string()
-        .min(1, "Description is required")
-        .max(500, "Description must be less than 500 characters"),
-    sellingPrice: z.number()
-        .min(0, "Selling price cannot be negative")
-        .max(999999999, "Price is too large"),
-    showPrice: z.number()
-        .min(0, "Show price cannot be negative")
-        .max(999999999, "Price is too large"),
-    buyPrice: z.number()
-        .min(0, "Buy price cannot be negative")
-        .max(999999999, "Price is too large"),
-    expDate: z.string().min(1, "Expiration date is required"),
-    activeState: z.boolean(),
-});
+interface ProductFormData {
+    productName: string;
+    quantity: number;
+    description: string;
+    sellingPrice: number;
+    showPrice: number;
+    buyPrice: number;
+    expDate: string;
+    activeState: boolean;
+}
 
-type ProductFormData = z.infer<typeof formSchema>;
-
-interface Props {
+const ProductUpdateModalForm: React.FC<{
     data: Products;
     show: boolean;
     onHide: () => void;
     onSuccess?: () => void;
-}
+}> = ({ data, show, onHide, onSuccess }) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState<ProductFormData>({
+        productName: data.productName,
+        quantity: data.quantity,
+        description: data.description,
+        sellingPrice: data.sellingPrice,
+        showPrice: data.showPrice,
+        buyPrice: data.buyPrice,
+        expDate: formatDateForInput(data.expDate),
+        activeState: data.activeState
+    });
+    const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({});
 
-const ProductUpdateModalForm: React.FC<Props> = ({ 
-    data, 
-    show, 
-    onHide,
-    onSuccess 
-}) => {
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-    const formatDateForInput = (dateString: string): string => {
+    // Date formatting utility
+    function formatDateForInput(dateString: string): string {
         try {
             const date = new Date(dateString);
             return date.toISOString().split('T')[0];
         } catch (error) {
             console.error('Date formatting error:', error);
-            return new Date().toISOString().split('T')[0]; // Fallback to current date
+            return new Date().toISOString().split('T')[0];
         }
-    };
+    }
 
-    const {
-        control,
-        handleSubmit,
-        formState: { errors },
-        reset,
-    } = useForm<ProductFormData>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
+    // Reset form when data changes
+    useEffect(() => {
+        setFormData({
             productName: data.productName,
             quantity: data.quantity,
             description: data.description,
@@ -73,22 +56,53 @@ const ProductUpdateModalForm: React.FC<Props> = ({
             showPrice: data.showPrice,
             buyPrice: data.buyPrice,
             expDate: formatDateForInput(data.expDate),
-            activeState: data.activeState,
-        },
-    });
+            activeState: data.activeState
+        });
+    }, [data]);
 
-    const handleClose = () => {
-        reset();
-        onHide();
+    // Handle input changes
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.target;
+        
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : 
+                    type === 'number' ? Number(value) : value
+        }));
     };
 
-    const onSubmit = handleSubmit(async (formData) => {
+    // Validate form
+    const validateForm = (): boolean => {
+        const newErrors: Partial<Record<keyof ProductFormData, string>> = {};
+
+        if (!formData.productName) {
+            newErrors.productName = "Product name is required";
+        } else if (formData.productName.length > 100) {
+            newErrors.productName = "Product name must be less than 100 characters";
+        }
+
+        if (!formData.expDate) {
+            newErrors.expDate = "Expiration date is required";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    // Handle form submission
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Validate form
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             setIsSubmitting(true);
-            await axios.put(
-                `http://localhost:3000/api/v1/products/update/${data._id}`, 
-                formData
-            );
+            
+            await AxiosInstance.put(`/products/update/${data._id}`, formData);
+            
             toast.success('Product updated successfully');
             onSuccess?.();
             handleClose();
@@ -100,39 +114,24 @@ const ProductUpdateModalForm: React.FC<Props> = ({
         } finally {
             setIsSubmitting(false);
         }
-    });
+    };
 
-    const renderFormField = (
-        name: keyof ProductFormData,
-        label: string,
-        type: string,
-        placeholder: string
-    ) => (
-        <Row>
-            <Col>
-                <Form.Group className="py-2">
-                    <Form.Label>{label}</Form.Label>
-                    <Controller
-                        control={control}
-                        name={name}
-                        render={({ field }) => (
-                            <Form.Control
-                                {...field}
-                                type={type}
-                                placeholder={placeholder}
-                                disabled={isSubmitting}
-                            />
-                        )}
-                    />
-                    {errors[name] && (
-                        <span className="text-danger">
-                            {errors[name]?.message}
-                        </span>
-                    )}
-                </Form.Group>
-            </Col>
-        </Row>
-    );
+    // Handle modal close
+    const handleClose = () => {
+        // Reset form and close modal
+        setFormData({
+            productName: data.productName,
+            quantity: data.quantity,
+            description: data.description,
+            sellingPrice: data.sellingPrice,
+            showPrice: data.showPrice,
+            buyPrice: data.buyPrice,
+            expDate: formatDateForInput(data.expDate),
+            activeState: data.activeState
+        });
+        setErrors({});
+        onHide();
+    };
 
     return (
         <Modal 
@@ -142,40 +141,165 @@ const ProductUpdateModalForm: React.FC<Props> = ({
             centered
             backdrop="static"
         >
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit}>
                 <Modal.Header closeButton>
                     <Modal.Title>Update Product Details</Modal.Title>
                 </Modal.Header>
                 
                 <Modal.Body>
-                    {renderFormField("productName", "Product Name", "text", "Enter product name")}
-                    {renderFormField("quantity", "Quantity", "number", "Enter quantity")}
-                    {renderFormField("description", "Description", "text", "Enter description")}
-                    {renderFormField("sellingPrice", "Selling Price", "number", "Enter selling price")}
-                    {renderFormField("showPrice", "Show Price", "number", "Enter show price")}
-                    {renderFormField("buyPrice", "Buy Price", "number", "Enter buy price")}
-                    {renderFormField("expDate", "Expiration Date", "date", "")}
-                    
+                    <Row>
+                        <Col>
+                            <Form.Group className="py-2">
+                                <Form.Label>Product Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="productName"
+                                    value={formData.productName}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Product Name"
+                                />
+                                {errors.productName && (
+                                    <span className="text-danger">
+                                        {errors.productName}
+                                    </span>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <Form.Group className="py-2">
+                                <Form.Label>Quantity</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="quantity"
+                                    value={formData.quantity}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter Quantity"
+                                />
+                                {errors.quantity && (
+                                    <span className="text-danger">
+                                        {errors.quantity}
+                                    </span>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <Form.Group className="py-2">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter description"
+                                />
+                                {errors.description && (
+                                    <span className="text-danger">
+                                        {errors.description}
+                                    </span>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <Form.Group className="py-2">
+                                <Form.Label>Selling Price</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="sellingPrice"
+                                    value={formData.sellingPrice}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter selling price"
+                                />
+                                {errors.sellingPrice && (
+                                    <span className="text-danger">
+                                        {errors.sellingPrice}
+                                    </span>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <Form.Group className="py-2">
+                                <Form.Label>Show Price</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="showPrice"
+                                    value={formData.showPrice}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter show price"
+                                />
+                                {errors.showPrice && (
+                                    <span className="text-danger">
+                                        {errors.showPrice}
+                                    </span>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <Form.Group className="py-2">
+                                <Form.Label>Buy Price</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    name="buyPrice"
+                                    value={formData.buyPrice}
+                                    onChange={handleInputChange}
+                                    placeholder="Enter buy price"
+                                />
+                                {errors.buyPrice && (
+                                    <span className="text-danger">
+                                        {errors.buyPrice}
+                                    </span>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col>
+                            <Form.Group className="py-2">
+                                <Form.Label>Expiration Date</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="expDate"
+                                    value={formData.expDate}
+                                    onChange={handleInputChange}
+                                />
+                                {errors.expDate && (
+                                    <span className="text-danger">
+                                        {errors.expDate}
+                                    </span>
+                                )}
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
                     <Row>
                         <Col>
                             <Form.Group className="py-2">
                                 <Form.Label>Active State</Form.Label>
-                                <Controller
-                                    control={control}
+                                <Form.Check 
+                                    type="checkbox"
                                     name="activeState"
-                                    render={({ field }) => (
-                                        <Form.Check 
-                                            {...field}
-                                            type="checkbox"
-                                            checked={field.value}
-                                            label="Active"
-                                            disabled={isSubmitting}
-                                        />
-                                    )}
+                                    checked={formData.activeState}
+                                    onChange={handleInputChange}
+                                    label="Active"
                                 />
                                 {errors.activeState && (
                                     <span className="text-danger">
-                                        {errors.activeState.message}
+                                        {errors.activeState}
                                     </span>
                                 )}
                             </Form.Group>

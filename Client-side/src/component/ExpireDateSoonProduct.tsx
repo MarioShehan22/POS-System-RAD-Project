@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Container, Row, Col, Button, Spinner, Alert } from 'react-bootstrap';
 import { ChevronLeft, ChevronRight, AlertCircle} from 'lucide-react';
+import AxiosInstance from '../confige/AxiosInstance';
 
 const ExpireDateSoonProduct = () => {
   const [products, setProducts] = useState([]);
@@ -40,9 +41,8 @@ const ExpireDateSoonProduct = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch("http://localhost:3000/api/v1/products/expiring-soon");
-        const data = await response.json();
-        setProducts(data);
+        const response = await AxiosInstance.get("/products/expiring-soon");
+        setProducts(response.data);
         setError("");
       } catch (error) {
         setError('Failed to fetch expiring products');

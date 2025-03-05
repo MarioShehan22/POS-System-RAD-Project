@@ -7,12 +7,14 @@ import { Customers } from './CustomerManagement';
 import { motion } from 'framer-motion';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { BsCart2 } from 'react-icons/bs';
+import AxiosInstance from '../confige/AxiosInstance';
 
 interface Cart{
   _id:string | '',
   id:string | '',
   name:string| '',
-  unitPrice:number| 0,
+  discountedprice:number| 0,
+  unitprice:number| 0,
   qty:number| 0,
   total:number| 0
 }
@@ -25,30 +27,28 @@ const Ordermanagement = () => {
   const [selectedCustomer,setSelectedCustomer] = useState<Customers>(Object);
   const [customers, setCustomers]=useState<Customers[]>([]);
   const [totalItems,setTotalItems] = useState(0);
+  const storedUserString  = localStorage.getItem('userData');
+  const storedUser = JSON.parse(storedUserString);
   let totalPages;
   //const [isLoadingCustomer, setIsLoadingCustomer] = useState(false);
-
   const findAllProducts = async ()=> {
     try {
-      const response = await axios.get(`http://localhost:3000/api/v1/products/find-all?searchText=${searchText}&page=${page}&size=${size}`);
+      const response = await AxiosInstance.get(`/products/find-all?searchText=${searchText}&page=${page}&size=${size}`);
       setProducts(response.data.data.dataList);
-
+      setTotalItems(response.data.data.count);
     }catch (error){
       console.log(error);
     }
   }
   const findAllCustomers= async ()=>{
-    const response = await axios.get('http://localhost:3000/api/v1/customers/find-all');
+    const response = await AxiosInstance.get('/customers/find-all');
     setCustomers(response.data.data.dataList);
-    setTotalItems(response.data.data.count);
     totalPages = Math.ceil(12 / size); 
     console.log(response.data.data.dataList); 
   }
   const getCustomerById= async (id:string)=>{
-    //setIsLoadingCustomer(true);
-    const response = await axios.get('http://localhost:3000/api/v1/customers/find-by-id/' + id);
+    const response = await AxiosInstance.get('/customers/find-by-id/' + id);
     setSelectedCustomer(response.data.data);
-    //setIsLoadingCustomer(false);
     console.log(response.data.data);
   }
   const addToCart = (newItem: Cart) => {
@@ -60,7 +60,7 @@ const Ordermanagement = () => {
       setSelectedProducts((prevState) =>
         prevState.map((item) =>
           item._id === newItem._id
-            ? { ...item, qty: item.qty + newItem.qty, total: item.unitPrice * (item.qty + newItem.qty) }
+            ? { ...item, qty: item.qty + newItem.qty, total: item.discountedprice * (item.qty + newItem.qty) }
             : item
         )
       );
@@ -71,7 +71,7 @@ const Ordermanagement = () => {
     console.log(selectedProducts);
   };
   const getTotal = () => {
-      let netTotal = selectedProducts.reduce((total, products) => total + products.unitPrice * products.qty, 0).toFixed(4);
+      let netTotal = selectedProducts.reduce((total, products) => total + products.discountedprice * products.qty, 0).toFixed(4);
       console.log(netTotal);
       return netTotal;
   }
@@ -82,7 +82,7 @@ const Ordermanagement = () => {
     }
 
     setSelectedProducts(
-      (prevState) =>prevState.map((item) => (item._id === itemId ? { ...item, qty: newQty, total: item.unitPrice * newQty } : item))
+      (prevState) =>prevState.map((item) => (item._id === itemId ? { ...item, qty: newQty, total: item.discountedprice * newQty } : item))
     );
   };
 
@@ -102,6 +102,7 @@ const Ordermanagement = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
     >
+      <h2 className="text-start fw-bold my-3">Place Orders</h2>
       <Row className="my-2 p-2">
         <Col xs={12} md={4}>
           <Form.Select
@@ -136,20 +137,22 @@ const Ordermanagement = () => {
               </Card.Text>
               <div>
               <Button
-                  variant="success"
-                  size="lg"
+                  variant="primary"
+                  size="sm"
+                  className="w-100 d-flex justify-content-center align-items-center"
                   onClick={() =>
                     addToCart({
                       _id: product._id,
                       id:product.id,
                       name: product.productName,
-                      unitPrice: product.sellingPrice,
+                      unitprice:product.showPrice,
+                      discountedprice: product.sellingPrice,
                       qty: 1, // Default quantity to 1
                       total: product.sellingPrice,
                     })
                   }
                 >
-                  <BsCart2 /> Add to Cart
+                  <BsCart2 className='me-2'/> Add to Cart
                 </Button>
               </div>
             </Card.Body>
@@ -157,8 +160,8 @@ const Ordermanagement = () => {
         ))}
       </Row>
       <Row className='d-flex justify-content-center mb-2'>
-        <Button className='w-25 me-2' onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
-        <Button className='w-25 ' onClick={() => setPage(page + 1)} disabled={page === totalPages}>Next</Button>
+        <Button variant="info" className='w-25 me-2' onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
+        <Button variant="info" className='w-25 ' onClick={() => setPage(page + 1)} disabled={page === totalPages}>Next</Button>
       </Row>
       
       <h2>Cart Items</h2>
@@ -169,6 +172,7 @@ const Ordermanagement = () => {
             <th className="text-center">#</th>
             <th className="text-center">Product Name</th>
             <th className="text-center">Quantity</th>
+            <th className="text-center">Discounted Price</th>
             <th className="text-center">Unit Price</th>
             <th className="text-center">Total Price</th>
             <th className="text-center">Actions</th>
@@ -179,16 +183,17 @@ const Ordermanagement = () => {
             <tr key={item._id}>
               <td className="text-center">{item._id}</td>
               <td className="text-center">{item.name}</td>
-              <td className="text-center">
-                {item.qty}
-                <Button variant="secondary" size="sm" style={{ marginLeft: 10 }} onClick={() => handleQuantityChange(item._id, item.qty - 1)}>
+              <td className="d-flex justify-content-center align-items-center">
+                <Button variant="secondary" size="sm" style={{ marginRight: 10 }} onClick={() => handleQuantityChange(item._id, item.qty - 1)}>
                   -
                 </Button>
+                {item.qty}
                 <Button variant="secondary" size="sm" style={{ marginLeft: 10 }} onClick={() => handleQuantityChange(item._id, item.qty + 1)}>
                   +
                 </Button>
               </td>
-              <td className="text-center">Rs {(item.unitPrice).toFixed(2)}</td> 
+              <td className="text-center">Rs {(item.discountedprice).toFixed(2)}</td> 
+              <td className="text-center">Rs {(item.unitprice).toFixed(2)}</td> 
               <td className="text-center">Rs {(item.total).toFixed(2)}</td> 
               <td className="text-center">
                 <Button variant="danger" size="sm" style={{ marginLeft: 10 }} onClick={() => removeFromCart(item._id)}>
@@ -205,8 +210,9 @@ const Ordermanagement = () => {
       <h2 className='text-danger'>Total : {getTotal()} </h2>
         <button className='my-2 btn btn-secondary' 
         onClick={async ()=>{
-            await axios.post('http://localhost:3000/api/v1/orders/create',{
+            await AxiosInstance.post('/orders/create',{
               Customer:selectedCustomer,
+              user:storedUser._id,
               status:"PENDING",
               total:getTotal(),
               products: selectedProducts

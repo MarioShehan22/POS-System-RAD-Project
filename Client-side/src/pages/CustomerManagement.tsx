@@ -1,12 +1,11 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
-import PageBadge from "../component/PageBadge/PageBadge.tsx";
 import {Button, Table} from "react-bootstrap";
 import CustomerForm from "../Forms/CustomerForm.tsx";
 import { motion } from 'framer-motion';
 import CustomerUpdateModalForm from "../Forms/CustomerUpdateModalForm.tsx";
 import { BiPencil } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import AxiosInstance from "../confige/AxiosInstance.ts";
 
 export interface Customer{
     firstName:string;
@@ -16,22 +15,24 @@ export interface Customer{
     phoneNumber:string;
     activeState: boolean | undefined;
 }
-export type  Customers = Customer & {_id:string};
+
+export type  Customers = Customer & {_id:string;id:string;};
 const CustomerManagement = () => {
     const [customers, setCustomers]=useState<Customers[]>([]);
     const [updateCustomers, setUpdateCustomers]=useState<Customers>({
         _id:"",
+        id:"",
         firstName:"",
         lastName:"",
         email:"",
         address:"",
         phoneNumber:"",
-        activeState: false
+        activeState: true
     });
     const [modalShow, setModalShow] = useState<boolean>(false);
     const findAllCustomers = async ()=> {
         try {
-            const response = await axios.get('http://localhost:3000/api/v1/customers/find-all');
+            const response = await AxiosInstance.get('/customers/find-all');
             setCustomers(response.data.data.dataList);
             console.log(response.data.data.dataList);
         }catch (error){
@@ -40,7 +41,7 @@ const CustomerManagement = () => {
     }
     const createCustomer = async (CustomerData:Customer) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/customers/create',CustomerData);
+            const response = await AxiosInstance.post('/customers/create',CustomerData);
             console.log(response.data.data);
             findAllCustomers();
         }catch (error){
@@ -48,7 +49,7 @@ const CustomerManagement = () => {
         }
     }
     const deleteCustomer= async (id: string)=>{
-        await axios.delete('http://localhost:3000/api/v1/customers/delete/'+id);
+        await AxiosInstance.delete('/customers/delete/'+id);
         findAllCustomers();
     }
     useEffect(()=>{
@@ -69,7 +70,7 @@ const CustomerManagement = () => {
             <Table striped bordered hover size="sm" className="p-2 rounded opacity-75 shadow">
                 <thead>
                     <tr>
-                        <th className="text-center">#</th>
+                        <th className="text-center">Id</th>
                         <th className="text-center">First Name</th>
                         <th className="text-center">Last Name</th>
                         <th className="text-center">email</th>
@@ -84,7 +85,7 @@ const CustomerManagement = () => {
                 {customers?.length > 0 ? (
                     customers.map((u, index) => (
                         <tr key={index}>
-                             <td className="text-center">{u._id}</td>
+                             <td className="text-center">{u.id}</td>
                              <td className="text-center">{u.firstName}</td>
                              <td className="text-center">{u.lastName}</td>
                              <td className="text-center">{u.email}</td>
